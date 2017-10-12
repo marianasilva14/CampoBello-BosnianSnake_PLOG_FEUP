@@ -1,4 +1,11 @@
-boards(initialBoard,[piece1,empty,piece1,empty,piece1,empty,piece1],
+getSymbol(empty, ' ').
+getSymbol(piece1, 'X').
+getSymbol(piece2, 'Y').
+getSymbol(noPiece, 'NP').
+
+
+initialBoard([
+[piece1,empty,piece1,empty,piece1,empty,piece1],
 [empty,piece1,empty,piece1,empty,piece1,empty],
 [empty,empty,piece1,empty,piece1,empty,empty],
 [empty,empty,empty,noPiece,empty,empty,empty],
@@ -8,7 +15,7 @@ boards(initialBoard,[piece1,empty,piece1,empty,piece1,empty,piece1],
 [empty,piece2,empty,piece2,empty,piece2,empty],
 [piece2,empty,piece2,empty,piece2,empty,piece2]]).
 
-boards(gameBoard,
+gameBoard([
 [piece1,empty,noPiece,empty,piece2,empty,noPiece],
 [empty,noPiece,empty,noPiece,empty,noPiece,empty],
 [empty,empty,piece1,empty,noPiece,empty,empty],
@@ -20,7 +27,7 @@ boards(gameBoard,
 [piece2,empty,piece2,empty,piece2,empty,piece2]]).
 
 
-boards(finalBoard,
+finalBoard([
 [noPiece,empty,noPiece,empty,noPiece,empty,noPiece],
 [empty,noPiece,empty,noPiece,empty,noPiece,empty],
 [empty,empty,noPiece,empty,noPiece,empty,empty],
@@ -31,10 +38,14 @@ boards(finalBoard,
 [empty,noPiece,empty,piece2,empty,noPiece,empty],
 [piece2,empty,piece2,empty,piece2,empty,piece2]]).
 
-printLetters:-
-write('A     B     C     D     E     F     G     H    I').
-printLine:-
-write('________________________________________________').
 
-printNumbers([' 1 ', ' 2 ',' 3 ', ' 4 ',' 5 ',' 6 ',' 7 ', ' 8 ',' 9 ']).
-printRowBoard([], []).
+printBoard([L|Ls]) :-
+          printRow(L),nl,
+          printBoard(Ls).
+printBoard([]):-
+          nl.
+printRow([X|Xs]):-
+        getSymbol(X,Piece),
+        write(' '), write(Piece),write('  |'),
+        printRow(Xs).
+printRow([]).
