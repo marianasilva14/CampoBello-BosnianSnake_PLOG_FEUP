@@ -3,9 +3,7 @@ getSymbol(piece1, 'X').
 getSymbol(piece2, 'Y').
 getSymbol(noPiece, 'N').
 
-
-initialBoard([
-[empty,piece1,piece1,piece1,piece1,empty,empty,empty,empty],
+initialBoard([[empty,piece1,piece1,piece1,piece1,empty,empty,empty,empty],
 [empty,empty,piece1,piece1,piece1,empty,empty,empty,piece2],
 [empty,empty,empty,piece1,piece1,empty,empty,piece2,piece2],
 [empty,empty,empty,empty,noPiece,empty,piece2,piece2,piece2],
@@ -15,8 +13,7 @@ initialBoard([
 [piece1,empty,empty,empty,piece2,piece2,piece2,empty,empty],
 [empty,empty,empty,empty,piece2,piece2,piece2,piece2,empty]]).
 
-gameBoard([
-[empty,piece1,noPiece,piece1,noPiece,empty,empty,empty,empty],
+gameBoard([[empty,piece1,noPiece,piece1,noPiece,empty,empty,empty,empty],
 [empty,empty,piece1,piece1,piece1,empty,empty,empty,piece2],
 [empty,empty,empty,piece1,noPiece,empty,empty,piece2,noPiece],
 [empty,empty,empty,empty,noPiece,empty,piece2,piece2,piece2],
@@ -26,8 +23,7 @@ gameBoard([
 [piece1,empty,empty,empty,piece2,noPiece,piece2,empty,empty],
 [empty,empty,empty,empty,piece2,piece2,piece2,noPiece,empty]]).
 
-finalBoard([
-[empty,noPiece,noPiece,noPiece,noPiece,empty,empty,empty,empty],
+finalBoard([[empty,noPiece,noPiece,noPiece,noPiece,empty,empty,empty,empty],
 [empty,empty,noPiece,noPiece,noPiece,empty,empty,empty,noPiece],
 [empty,empty,empty,noPiece,noPiece,empty,empty,piece2,piece2],
 [empty,empty,empty,empty,piece2,empty,noPiece,piece2,piece2],
@@ -39,6 +35,7 @@ finalBoard([
 
 
 printFinalBoard([L|Ls]):-
+    nl,
     printLetters,nl,
     printBoard([L|Ls],0),
     printLine.
