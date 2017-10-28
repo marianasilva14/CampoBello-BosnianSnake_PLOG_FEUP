@@ -1,3 +1,7 @@
+:- include('gameLogic.pl').
+:- include('displayBoard.pl').
+
+
 printMainMenu:-
   nl,nl,nl,
   write('         ___________________________________________________________________________________________'),nl,
@@ -7,7 +11,7 @@ printMainMenu:-
   write('        |                                                                                           |'),nl,
   write('        |  _____   ______   _    _   ______   ______     ______   ______   __       __      ______  |'),nl,
   write('        | |  ___| |  __  | | |  | | |  __  | |  __  |   |  __  | |  ____| |  |     |  |    |  __  | |'),nl,
-  write('        | | |     | |__| | | |__| | | |__| | | |  | |   | |__| | | |____  |  |     |  |    | |  | | |'),nl,
+  write('        | | |     | |__| | | `__/ | | |__| | | |  | |   | |__| | | |____  |  |     |  |    | |  | | |'),nl,
   write('        | | |     | |__| | | |  | | |  ____| | |  | |   |  __  | |  ____| |  |     |  |    | |  | | |'),nl,
   write('        | | |___  | |  | | | |  | | | |      | |__| |   | |__| | | |____  |  |___  |  |___ | |__| | |'),nl,
   write('        | |_____| |_|  |_| |_|  |_| |_|      |______|   |______| |______| |______| |______||______| |'),nl,
@@ -32,33 +36,49 @@ printMainMenu:-
 
   printHowToPlayMenu:-
     nl,nl,nl,
-    write('         _____________________________________________________________________________'),nl,
-    write('        |                                                                             |'),nl,
-    write('        |                                                                             |'),nl,
-    write('        |                                                                             |'),nl,
-    write('        |             _   _                 _         ______ _                        |'),nl,
-    write('        |            | | | |               | |        | ___ | |                       |'),nl,
-    write('        |            | |_| | _____      __ | |_ ___   | |_/ / | __ _ _   _            |'),nl,
-    write('        |            |  _  |/ _  |  /| / / | __/ _  |  |  __/| |/ _` | | | |          |'),nl,
-    write('        |            | | | | (_) | V  V /  | || (_) | | |   | | (_| | |_| |           |'),nl,
-    write('        |            |_| |_/|___/ |_/|_/   | __|___/  |_|   |_||__,_||__, |           |'),nl,
-    write('        |                                                             __/ |           |'),nl,
-    write('        |                                                             |___/           |'),nl,
-    write('        |                                                                             |'),nl,
-    write('        |    In this game, each player tries to remove as much as possible from their |'),nl,
-    write('        |of the board. In turn, the player must jump with his piece to another and if |'),nl,
-    write('        |the piece that jumped is one of yours, you should remove it from the game.   |'),nl,
-    write('        |Otherwise, if it is one of the adversaries, then you can remove any of your  |'),nl,
-    write('        |pieces ohe board (including the one used in the jump).                       |'),nl,
-    write('        |    Each player can "chain" up to 3 jumps with the same piece of but you can |'),nl,
-    write('        |not jump over it twice. The piece with which the player jumps can not occupy |'),nl,
-    write('        |the same space during the same move. If not can jump, the player can ignore  |'),nl,
-    write('        |his turn. The game continues even that a player has no more pieces on the    |'),nl,
-    write('        |board or no player can make a real leap.                                     |'),nl,
-    write('        |    At the end of the game, each player gets 1 point for each of their pieces|'),nl,
-    write('        |out of your starting area and 3 points for each piece that is in your area of|'),nl,
-    write('        |match. The player with the lowest number of points wins.                     |'),nl,
-    write('        |                                                                             |'),nl,
-    write('        |                                                                             |'),nl,
-    write('        |                             1. Main Menu                                    |'),nl,
-    write('        |_____________________________________________________________________________| '),nl,nl,nl,nl.
+    write('         ___________________________________________________________________________________________'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                    _   _                 _         ______ _                               |'),nl,
+    write('        |                   | | | |               | |        | ___ | |                              |'),nl,
+    write('        |                   | |_| | _____      __ | |_ ___   | |_/ / | __ _ _   _                   |'),nl,
+    write('        |                   |  _  |/ _  |  /| / / | __/ _  | |  __/| |/ _` | | | |                  |'),nl,
+    write('        |                   | | | | (_) | V  V /  | || (_) | | |   | | (_| | |_| |                  |'),nl,
+    write('        |                   |_| |_/|___/ |_/|_/   | __|___/  |_|   |_||__,_||__, |                  |'),nl,
+    write('        |                                                                    __/ |                  |'),nl,
+    write('        |                                                                    |___/                  |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |    In this game, each player tries to remove as much as possible from their of the board. |'),nl,
+    write('        |In turn, the player must jump with his piece to another and if the piece that jumped is one|'),nl,
+    write('        |of yours, you should remove it from the game. Otherwise, if it is one of the adversaries,  |'),nl,
+    write('        |then you can remove any of your pieces ohe board (including the one used in the jump).     |'),nl,
+    write('        |    Each player can "chain" up to 3 jumps with the same piece of but you can not jump over |'),nl,
+    write('        |it twice. The piece with which the player jumps can not occupy the same space during the   |'),nl,
+    write('        |same move. If not can jump, the player can ignore his turn. The game continues even that a |'),nl,
+    write('        |player has no more pieces on the board or no player can make a real leap.                  |'),nl,
+    write('        |    At the end of the game, each player gets 1 point for each of their pieces out of your  |'),nl,
+    write('        |starting area and 3 points for each piece that is in your area of match. The player with   |'),nl,
+    write('        |the lowest number of points wins.                                                          |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                             1. Main Menu                                                  |'),nl,
+    write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl.
+
+
+
+mainMenu :- printMainMenu,
+            read(Input),
+            readInput(Input).
+
+readInput(1) :- initialBoard(Board),printFinalBoard(Board),
+                nl,
+                play.
+/*
+readInput(2) :-
+
+readInput(3) :-*/
+
+readInput(4) :- printHowToPlayMenu.
+
+readInput(5) :- write('Exiting...').
