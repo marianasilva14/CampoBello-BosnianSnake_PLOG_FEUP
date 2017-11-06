@@ -1,7 +1,3 @@
-:- include('gameLogic.pl').
-:- include('displayBoard.pl').
-
-
 printMainMenu:-
   nl,nl,nl,
   write('         ___________________________________________________________________________________________'),nl,
@@ -18,7 +14,6 @@ printMainMenu:-
   write('        |                                                                                           |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                                                                                           |'),nl,
-  write('        |                                 Choose an option, please!                                 |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                               1.Start Game Player vs Player                               |'),nl,
   write('        |                                                                                           |'),nl,
@@ -31,7 +26,8 @@ printMainMenu:-
   write('        |                                           5.Exit                                          |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                                                                                           |'),nl,
-  write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl.
+  write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl,
+  write('                                          Choose an option, please!                                   '),nl, nl, nl, nl.
 
 
   printHowToPlayMenu:-
@@ -62,7 +58,7 @@ printMainMenu:-
     write('        |the lowest number of points wins.                                                          |'),nl,
     write('        |                                                                                           |'),nl,
     write('        |                                                                                           |'),nl,
-    write('        |                             1. Main Menu                                                  |'),nl,
+    write('        |                                          0. Back                                          |'),nl,
     write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl.
 
 
@@ -71,14 +67,17 @@ mainMenu :- printMainMenu,
             read(Input),
             readInput(Input).
 
+readInput(0) :- mainMenu.
+
 readInput(1) :- initialBoard(Board),printFinalBoard(Board),
-                nl,
-                play.
+                play(Board).
 /*
 readInput(2) :-
 
 readInput(3) :-*/
 
-readInput(4) :- printHowToPlayMenu.
+readInput(4) :- printHowToPlayMenu,
+                read(Input),
+                readInput(Input).
 
 readInput(5) :- write('Exiting...').
