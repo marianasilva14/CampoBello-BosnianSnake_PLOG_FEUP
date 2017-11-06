@@ -24,11 +24,15 @@ printFinalBoard([L|Ls]):-
 
 printLetters:-write('     A     B     C     D     E     F     G     H     I').
 
+printSpaces:-write('   |    |     |     |     |     |     |     |     |     |').
+
 printBoard([],_).
 printBoard([L|Ls],Y) :-
           printLine,nl,
+          printSpaces,nl,
           Y1 is Y+1,
           printFinalRow(L,Y1),nl,
+          printSpaces,nl,
           printBoard(Ls,Y1).
 
 printFinalRow([X|Xs],Y):-
@@ -38,5 +42,5 @@ printRow([X|Xs]):-
         getSymbol(X,Piece),
         write(' '), write(Piece),write('  | '),
         printRow(Xs).
-printLine:-write('   ------------------------------------------------------').
 printRow([]).
+printLine:-write('   ------------------------------------------------------').
