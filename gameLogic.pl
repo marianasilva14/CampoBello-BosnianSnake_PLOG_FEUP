@@ -1,7 +1,8 @@
+:-use_module(library(lists)).
 
-play(Board) :- chooseSourceCoords(RowSource, ColSource, Board, Piece),
-               chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut),
-               play(BoardOut).
+play(Board,Points) :- chooseSourceCoords(RowSource, ColSource, Board, Piece),
+               chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut,Points,PointsOut),
+               play(BoardOut,PointsOut).
 
 
 chooseSourceCoords(RowSource, ColSource,Board,Piece) :- nl, write('Please choose the piece that you want move:'), nl,
@@ -14,7 +15,8 @@ chooseSourceCoords(RowSource, ColSource,Board,Piece) :- nl, write('Please choose
                                                             validateSourcePiece(ColSource, RowSource,Board,Piece).
 
 
-chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut) :- write('What is the position of Piece that you want move?'),
+chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut,PointsIn,PointsOut) :- endGame(Board,Piece),
+                                                                                write('What is the position of Piece that you want move?'),
                                                                                  nl,
                                                                                  write('Please enter a position (A...I)'),
                                                                                  nl,
@@ -23,7 +25,7 @@ chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut) :- write('What 
                                                                                  write('Please enter a position (1...9)'),
                                                                                  nl,
                                                                                  getCode(RowDestiny),
-                                                                                 validateDestinyPiece(ColSource,RowSource,ColDestiny, RowDestiny,Board,Piece, BoardOut),
+                                                                                 validateDestinyPiece(ColSource,RowSource,ColDestiny, RowDestiny,Board,Piece, BoardOut,PointsIn,PointsOut),
                                                                                  printFinalBoard(BoardOut).
 
 
@@ -41,14 +43,74 @@ validateSourcePiece(Ncol, Nrow,Board,Piece) :- getPiece(Board, Nrow, Ncol, Piece
                                                Piece \= 'empty',
                                                Piece \= 'noPiece'.
 
-validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut) :- checkIfCanMove(Ncol, Nrow, Board,NewPiece),
+validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut,PointsIn,PointsOut) :-
+                                                                          checkIfCanMove(Ncol, Nrow, Board,NewPiece,Piece),
                                                                           validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
                                                                           setPiece(Board,Nrow,Ncol,Piece,BoardOut2),
-                                                                          setPiece(BoardOut2,LastRow,LastCol,NewPiece,BoardOut).
+                                                                          setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
+                                                                          updatePoints(NewPiece,Piece,PointsIn,PointsOut),
+                                                                          write(PointsOut),nl.
 
 
-checkIfCanMove(Ncol,Nrow,Board,NewPiece) :- getPiece(Board, Nrow, Ncol, NewPiece),
-                                          NewPiece == 'noPiece'.
+checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceX1') :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                      NewPiece \= 'pieceY1',
+                                                      NewPiece \= 'pieceY2'.
+
+checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceX2') :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                      NewPiece \= 'pieceY1',
+                                                      NewPiece \= 'pieceY2'.
+
+checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceY1') :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                      NewPiece \= 'pieceX1',
+                                                      NewPiece \= 'pieceX2'.
+
+checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceY2') :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                      NewPiece \= 'pieceX1',
+                                                      NewPiece \= 'pieceX2'.
+
+updatePoints(NewPiece,'pieceX1',PointsIn,PointsOut) :- ((NewPiece \= 'pieceY1',
+                                          NewPiece \= 'pieceY2',
+                                          NewPiece \= 'noPiece',
+                                          PointsOut is PointsIn + 3);
+                                          (NewPiece \= 'pieceX1',
+                                          NewPiece \= 'pieceX2',
+                                          NewPiece \= 'noPiece',
+                                          PointsOut is PointsIn +1);
+                                          (NewPiece == 'noPiece',
+                                          PointsOut is PointsIn)).
+
+updatePoints(NewPiece,'pieceX2',PointsIn,PointsOut) :- ((NewPiece \= 'pieceY1',
+                                                    NewPiece \= 'pieceY2',
+                                                    NewPiece \= 'noPiece',
+                                                    PointsOut is PointsIn + 3);
+                                                    (NewPiece \= 'pieceX1',
+                                                    NewPiece \= 'pieceX2',
+                                                    NewPiece \= 'noPiece',
+                                                    PointsOut is PointsIn +1);
+                                                    (NewPiece == 'noPiece',
+                                                    PointsOut is PointsIn)).
+
+updatePoints(NewPiece,'pieceY1',PointsIn,PointsOut) :- ((NewPiece \= 'pieceY1',
+                                                    NewPiece \= 'pieceY2',
+                                                    NewPiece \= 'noPiece',
+                                                    PointsOut is PointsIn + 1);
+                                                    (NewPiece \= 'pieceX1',
+                                                    NewPiece \= 'pieceX2',
+                                                    NewPiece \= 'noPiece',
+                                                    PointsOut is PointsIn +3);
+                                                    (NewPiece == 'noPiece',
+                                                    PointsOut is PointsIn)).
+
+updatePoints(NewPiece,'pieceY2',PointsIn,PointsOut) :- ((NewPiece \= 'pieceY1',
+                                                    NewPiece \= 'pieceY2',
+                                                    NewPiece \= 'noPiece',
+                                                    PointsOut is PointsIn + 1);
+                                                    (NewPiece \= 'pieceX1',
+                                                    NewPiece \= 'pieceX2',
+                                                    NewPiece \= 'noPiece',
+                                                    PointsOut is PointsIn +3);
+                                                    (NewPiece == 'noPiece',
+                                                    PointsOut is PointsIn)).
 
 validateMove('pieceX1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
                                                  Nrow is LastRow+2);
@@ -98,3 +160,62 @@ setOnCol(1, [_|Remainder], Piece, [Piece|Remainder]).
 setOnCol(Pos, [X|Remainder], Piece, [X|Newremainder]):- Pos > 1,
                                                         Next is Pos-1,
                                                         setOnCol(Next, Remainder, Piece, Newremainder).
+
+if_then_else(If, Then,_):- If, Then.
+if_then_else(_, _, Else):- Else.
+
+getElement(Board,Nrow,Ncol,Element) :- nth1(Nrow, Board, Row),
+                                       nth1(Ncol,Row,Element).
+
+checkPieces('pieceX1',Board) :- getElement(Board,Nrow,Ncol,'pieceX1').
+
+checkPieces('pieceX2',Board) :- getElement(Board,Nrow,Ncol,'pieceX2').
+
+checkPieces('pieceY1',Board) :- getElement(Board,Nrow,Ncol,'pieceY1').
+
+checkPieces('pieceY2',Board) :- getElement(Board,Nrow,Ncol,'pieceY2').
+
+checkMoves('pieceX1', Board) :- getElement(Board, Nrow, Ncol, 'pieceX1'),
+                            NewRow is Nrow+2,
+                            Newcol is Ncol+2,
+                            (getPiece(Board,NewRow,Newcol,Piece),
+                            Piece \='empty');
+                            (getPiece(Board,Nrow,Newcol,Piece,
+                            Piece \='empty');
+                            (getPiece(Board,NewRow,Ncol,Piece),
+                            Piece \='empty').
+
+checkMoves('pieceX2', Board) :- getElement(Board, Nrow, Ncol, 'pieceX2'),
+                           NewRow is Nrow+2,
+                           Newcol is Ncol+2,
+                           Newrow is Nrow-2,
+                          (getPiece(Board,Nrow,Newcol,Piece),
+                          Piece \='empty');
+                          (getPiece(Board,NewRow,Ncol,Piece),
+                          Piece \='empty');
+                          (getPiece(Board,Newrow,Newcol,Piece),
+                          Piece \='empty').
+
+checkMoves('pieceY1', Board) :- getElement(Board, Nrow, Ncol, 'pieceY1'),
+                          NewRow is Nrow+2,
+                          Newcol is Ncol+2,
+                          NewCol is Ncol-2,
+                          (getPiece(Board,NewRow,NewCol,Piece),
+                          Piece \='empty');
+                          (getPiece(Board,NewRow,Newcol,Piece),
+                          Piece \='empty');
+                          (getPiece(Board,Nrow,NCol,Piece),
+                          Piece \='empty').
+
+checkMoves('pieceY2', Board) :- getElement(Board, Nrow, Ncol, 'pieceY2'),
+                          NewRow is Nrow-2,
+                          Newcol is Ncol-2,
+                          (getPiece(Board,NewRow,Newcol,Piece),
+                          Piece \='empty');
+                          (getPiece(Board,Nrow,Newcol,Piece),
+                          Piece \='empty');
+                          (getPiece(Board,NewRow,Ncol,Piece),
+                          Piece \='empty').
+
+endGame(Board,Piece) :- if_then_else(checkPieces(Piece,Board),write('encontrei'),('falhei')),
+                        if_then_else(checkMoves(Piece,Board),write('checkMoves'),('falheiCheckMoves')).

@@ -7,12 +7,14 @@ printMainMenu:-
   write('        |                                                                                           |'),nl,
   write('        |  _____   ______   _    _   ______   ______     ______   ______   __       __      ______  |'),nl,
   write('        | |  ___| |  __  | | |  | | |  __  | |  __  |   |  __  | |  ____| |  |     |  |    |  __  | |'),nl,
-  write('        | | |     | |__| | | `__/ | | |__| | | |  | |   | |__| | | |____  |  |     |  |    | |  | | |'),nl,
+  write('        | | |     | |__| | | /__/ | | |__| | | |  | |   | |__| | | |____  |  |     |  |    | |  | | |'),nl,
   write('        | | |     | |__| | | |  | | |  ____| | |  | |   |  __  | |  ____| |  |     |  |    | |  | | |'),nl,
   write('        | | |___  | |  | | | |  | | | |      | |__| |   | |__| | | |____  |  |___  |  |___ | |__| | |'),nl,
   write('        | |_____| |_|  |_| |_|  |_| |_|      |______|   |______| |______| |______| |______||______| |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                                                                                           |'),nl,
+  write('        |                        Francisca Leao Cerquinho Ribeiro da Fonseca                        |'),nl,
+  write('        |                                    Mariana Lopes Silva                                    |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                               1.Start Game Player vs Player                               |'),nl,
@@ -51,8 +53,8 @@ printMainMenu:-
     write('        |then you can remove any of your pieces ohe board (including the one used in the jump).     |'),nl,
     write('        |    Each player can "chain" up to 3 jumps with the same piece of but you can not jump over |'),nl,
     write('        |it twice. The piece with which the player jumps can not occupy the same space during the   |'),nl,
-    write('        |same move. If not can jump, the player can ignore his turn. The game continues even that a |'),nl,
-    write('        |player has no more pieces on the board or no player can make a real leap.                  |'),nl,
+    write('        |same move. If not can jump, the player can ignore his turn. The game ends when a player has|'),nl,
+    write('        |no more pieces on the board or no player can make a real leap.                             |'),nl,
     write('        |    At the end of the game, each player gets 1 point for each of their pieces out of your  |'),nl,
     write('        |starting area and 3 points for each piece that is in your area of match. The player with   |'),nl,
     write('        |the lowest number of points wins.                                                          |'),nl,
@@ -69,8 +71,8 @@ mainMenu :- printMainMenu,
 
 readInput(0) :- mainMenu.
 
-readInput(1) :- initialBoard(Board),printFinalBoard(Board),
-                play(Board).
+readInput(1) :- finalBoard(Board),printFinalBoard(Board),
+                play(Board,0).
 /*
 readInput(2) :-
 

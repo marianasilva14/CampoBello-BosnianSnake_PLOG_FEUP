@@ -15,6 +15,15 @@ initialBoard([[empty,pieceX1,pieceX1,pieceX1,pieceX1,empty,empty,empty,empty],
 [pieceX2,empty,empty,empty,pieceY2,pieceY2,pieceY2,empty,empty],
 [empty,empty,empty,empty,pieceY2,pieceY2,pieceY2,pieceY2,empty]]).
 
+finalBoard([[empty,noPiece,noPiece,noPiece,noPiece,empty,empty,empty,empty],
+[empty,empty,noPiece,pieceX1,noPiece,empty,empty,empty,noPiece],
+[empty,empty,empty,noPiece,noPiece,empty,empty,pieceY2,pieceY2],
+[empty,empty,empty,empty,pieceY2,empty,noPiece,pieceY2,pieceY2],
+[noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,pieceY2,pieceY2,noPiece],
+[noPiece,noPiece,noPiece,empty,noPiece,empty,empty,empty,empty],
+[noPiece,noPiece,empty,empty,pieceY2,noPiece,empty,empty,empty],
+[noPiece,empty,empty,empty,pieceY2,pieceY2,pieceY2,empty,empty],
+[empty,empty,empty,empty,noPiece,pieceY2,noPiece,pieceY2,empty]]).
 
 printFinalBoard([L|Ls]):-
     nl,
