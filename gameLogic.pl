@@ -2,31 +2,36 @@
 
 play(Board,Points) :- chooseSourceCoords(RowSource, ColSource, Board, Piece),
                chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut,Points,PointsOut),
-               play(BoardOut,PointsOut).
+               if_then_else(endGame(Board),play(BoardOut,PointsOut),write('End Game')).
 
+chooseSourceCoords(RowSource, ColSource,Board,Piece) :-  repeat,nl,
+                                                          player(Curr_player),nl,
+                                                          write('It is the turn of '),
+                                                          write(Curr_player), nl,nl,
+                                                          write('Please choose the piece that you want move:'), nl,
+                                                          write('Please enter a position (A...I)'),nl,
+                                                          getChar(ColLetter),
+                                                          once(letterToNumber(ColLetter, ColSource)),
+                                                          write('Please enter a position (1...9)'),
+                                                          nl,
+                                                          getCode(RowSource),
+                                                          validateSourcePiece(ColSource, RowSource,Board,Piece).
 
-chooseSourceCoords(RowSource, ColSource,Board,Piece) :- nl, write('Please choose the piece that you want move:'), nl,
-                                                            write('Please enter a position (A...I)'),nl,
-                                                            getChar(ColLetter),
-                                                            letterToNumber(ColLetter, ColSource),
-                                                            write('Please enter a position (1...9)'),
-                                                            nl,
-                                                            getCode(RowSource),
-                                                            validateSourcePiece(ColSource, RowSource,Board,Piece).
-
-
-chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut,PointsIn,PointsOut) :- endGame(Board,Piece),
-                                                                                write('What is the position of Piece that you want move?'),
+chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut,PointsIn,PointsOut) :- repeat,nl,
+                                                                                write('What is the destiny of your piece?'),
                                                                                  nl,
                                                                                  write('Please enter a position (A...I)'),
                                                                                  nl,
                                                                                  getChar(ColLetter),
-                                                                                 letterToNumber(ColLetter, ColDestiny),
+                                                                                 once(letterToNumber(ColLetter, ColDestiny)),
                                                                                  write('Please enter a position (1...9)'),
                                                                                  nl,
                                                                                  getCode(RowDestiny),
                                                                                  validateDestinyPiece(ColSource,RowSource,ColDestiny, RowDestiny,Board,Piece, BoardOut,PointsIn,PointsOut),
-                                                                                 printFinalBoard(BoardOut).
+                                                                                 printFinalBoard(BoardOut),
+                                                                                 player(Curr_player),
+                                                                                 if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX')).
+
 
 
 letterToNumber('A',1).
@@ -39,7 +44,13 @@ letterToNumber('G',7).
 letterToNumber('H',8).
 letterToNumber('I',9).
 
-validateSourcePiece(Ncol, Nrow,Board,Piece) :- getPiece(Board, Nrow, Ncol, Piece),
+validateSourcePiece(Ncol, Nrow,Board,Piece) :- player(Curr_player),
+                                               getPiece(Board, Nrow, Ncol, Piece),
+                                               if_then_else(Curr_player == 'playerX',
+                                               (Piece \= 'pieceY1',
+                                               Piece \= 'pieceY2'),
+                                               (Piece \= 'pieceX1',
+                                               Piece \= 'pieceX2')),
                                                Piece \= 'empty',
                                                Piece \= 'noPiece'.
 
@@ -161,26 +172,26 @@ setOnCol(Pos, [X|Remainder], Piece, [X|Newremainder]):- Pos > 1,
                                                         Next is Pos-1,
                                                         setOnCol(Next, Remainder, Piece, Newremainder).
 
-if_then_else(If, Then,_):- If, Then.
+if_then_else(If, Then,_):- If,!, Then.
 if_then_else(_, _, Else):- Else.
 
 getElement(Board,Nrow,Ncol,Element) :- nth1(Nrow, Board, Row),
                                        nth1(Ncol,Row,Element).
 
-checkPieces('pieceX1',Board) :- getElement(Board,Nrow,Ncol,'pieceX1').
+checkPieces('pieceX1',Board) :- getElement(Board,_,_,'pieceX1').
 
-checkPieces('pieceX2',Board) :- getElement(Board,Nrow,Ncol,'pieceX2').
+checkPieces('pieceX2',Board) :- getElement(Board,_,_,'pieceX2').
 
-checkPieces('pieceY1',Board) :- getElement(Board,Nrow,Ncol,'pieceY1').
+checkPieces('pieceY1',Board) :- getElement(Board,_,_,'pieceY1').
 
-checkPieces('pieceY2',Board) :- getElement(Board,Nrow,Ncol,'pieceY2').
+checkPieces('pieceY2',Board) :- getElement(Board,_,_,'pieceY2').
 
 checkMoves('pieceX1', Board) :- getElement(Board, Nrow, Ncol, 'pieceX1'),
                             NewRow is Nrow+2,
                             Newcol is Ncol+2,
                             (getPiece(Board,NewRow,Newcol,Piece),
                             Piece \='empty');
-                            (getPiece(Board,Nrow,Newcol,Piece,
+                            (getPiece(Board,Nrow,Newcol,Piece),
                             Piece \='empty');
                             (getPiece(Board,NewRow,Ncol,Piece),
                             Piece \='empty').
@@ -204,7 +215,7 @@ checkMoves('pieceY1', Board) :- getElement(Board, Nrow, Ncol, 'pieceY1'),
                           Piece \='empty');
                           (getPiece(Board,NewRow,Newcol,Piece),
                           Piece \='empty');
-                          (getPiece(Board,Nrow,NCol,Piece),
+                          (getPiece(Board,Nrow,NewCol,Piece),
                           Piece \='empty').
 
 checkMoves('pieceY2', Board) :- getElement(Board, Nrow, Ncol, 'pieceY2'),
@@ -217,5 +228,8 @@ checkMoves('pieceY2', Board) :- getElement(Board, Nrow, Ncol, 'pieceY2'),
                           (getPiece(Board,NewRow,Ncol,Piece),
                           Piece \='empty').
 
-endGame(Board,Piece) :- if_then_else(checkPieces(Piece,Board),write('encontrei'),('falhei')),
-                        if_then_else(checkMoves(Piece,Board),write('checkMoves'),('falheiCheckMoves')).
+endGame(Board) :- player(Curr_player),
+                  if_then_else(Curr_player==playerX, (checkPieces('pieceX1',Board),checkPieces('pieceX2',Board),
+                                                    checkMoves('pieceX1',Board),checkMoves('pieceX2',Board)),
+                                                              (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board),
+                                                               checkMoves('pieceY1',Board),checkMoves('pieceY2',Board))).
