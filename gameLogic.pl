@@ -1,11 +1,9 @@
 :-use_module(library(lists)).
+:-use_module(library(random)).
 
-play(Board,PointsX,PointsY) :- chooseSourceCoords(RowSource, ColSource, Board, Piece),
-               chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut,PointsX,PointsXOut,PointsY,PointsYOut),nl,nl,
-               write('Points PlayerX:'),
-               write(PointsXOut),nl,
-               write('Points PlayerY:'),
-               write(PointsYOut),nl,
+play(Board) :- calculatePoints(Board),
+              chooseSourceCoords(RowSource, ColSource, Board, Piece),
+               chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut),nl,nl,
                if_then_else(endGame(Board),play(BoardOut,PointsXOut,PointsYOut),(nl,write('End Game'),nl,checkWinner(PointsXOut,PointsYOut))).
 
 chooseSourceCoords(RowSource, ColSource,Board,Piece) :-  repeat,nl,
@@ -21,7 +19,7 @@ chooseSourceCoords(RowSource, ColSource,Board,Piece) :-  repeat,nl,
                                                           getCode(RowSource),
                                                           validateSourcePiece(ColSource, RowSource,Board,Piece).
 
-chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut,PointsXIn,PointsXOut,PointsYIn,PointsYOut) :- repeat,nl,
+chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut) :- repeat,nl,
                                                                                 write('What is the destiny of your piece?'),
                                                                                  nl,
                                                                                  write('Please enter a position (A...I)'),
@@ -31,7 +29,7 @@ chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut,PointsXIn,Points
                                                                                  write('Please enter a position (1...9)'),
                                                                                  nl,
                                                                                  getCode(RowDestiny),
-                                                                                 validateDestinyPiece(ColSource,RowSource,ColDestiny, RowDestiny,Board,Piece, BoardOut,PointsXIn,PointsXOut,PointsYIn,PointsYOut),
+                                                                                 validateDestinyPiece(ColSource,RowSource,ColDestiny, RowDestiny,Board,Piece, BoardOut),
                                                                                  printFinalBoard(BoardOut),
                                                                                  player(Curr_player),
                                                                                  if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX')).
@@ -58,82 +56,24 @@ validateSourcePiece(Ncol, Nrow,Board,Piece) :- player(Curr_player),
                                                Piece \= 'empty',
                                                Piece \= 'noPiece'.
 
-validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut,PointsXIn,PointsXOut,PointsYIn,PointsYOut) :-
-                                                                          checkIfCanMove(Ncol, Nrow, Board,NewPiece,Piece),
+validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut) :-
+                                                                          checkIfCanMove(Ncol, Nrow, Board,Piece),
                                                                           validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
                                                                           setPiece(Board,Nrow,Ncol,Piece,BoardOut2),
-                                                                          setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
-                                                                          updatePoints(NewPiece,Piece,PointsXIn,PointsXOut,PointsYIn,PointsYOut).
+                                                                          setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut).
 
-checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceX1') :- getPiece(Board, Nrow, Ncol, NewPiece),
+checkIfCanMove(Ncol,Nrow,Board,'pieceX1') :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                       NewPiece \= 'empty'.
 
-
-checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceX2') :- getPiece(Board, Nrow, Ncol, NewPiece),
+checkIfCanMove(Ncol,Nrow,Board,'pieceX2') :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                       NewPiece \= 'empty'.
 
-checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceY1') :- getPiece(Board, Nrow, Ncol, NewPiece),
+checkIfCanMove(Ncol,Nrow,Board,'pieceY1') :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                       NewPiece \= 'empty'.
 
-checkIfCanMove(Ncol,Nrow,Board,NewPiece,'pieceY2') :- getPiece(Board, Nrow, Ncol, NewPiece),
+checkIfCanMove(Ncol,Nrow,Board,'pieceY2') :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                       NewPiece \= 'empty'.
 
-updatePoints(NewPiece,'pieceX1',PointsXIn,PointsXOut,PointsYIn,PointsYOut) :- (NewPiece \= 'pieceY1',
-                                                                      NewPiece \= 'pieceY2',
-                                                                      NewPiece \= 'noPiece',
-                                                                      player(Curr_player),
-                                                                      if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 3, PointsYOut is PointsYIn),
-                                                                                                  (PointsYOut is PointsYIn + 3, PointsXOut is PointsXIn)));
-                                                                      (NewPiece \= 'pieceX1',
-                                                                      NewPiece \= 'pieceX2',
-                                                                      NewPiece \= 'noPiece',
-                                                                      if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 1, PointsYOut is PointsYIn),
-                                                                                                  (PointsYOut is PointsYIn + 1, PointsXOut is PointsXIn)));
-                                                                      (NewPiece == 'noPiece',
-                                                                      if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn, PointsYOut is PointsYIn),
-                                                                                                  (PointsYOut is PointsYIn, PointsXOut is PointsXIn))).
-
-updatePoints(NewPiece,'pieceX2',PointsXIn,PointsXOut,PointsYIn,PointsYOut) :- (NewPiece \= 'pieceY1',
-                                                    NewPiece \= 'pieceY2',
-                                                    NewPiece \= 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 3, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn + 3, PointsXOut is PointsXIn)));
-                                                    (NewPiece \= 'pieceX1',
-                                                    NewPiece \= 'pieceX2',
-                                                    NewPiece \= 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 1, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn + 1, PointsXOut is PointsXIn)));
-                                                    (NewPiece == 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn, PointsXOut is PointsXIn))).
-
-updatePoints(NewPiece,'pieceY1',PointsXIn,PointsXOut,PointsYIn,PointsYOut) :- (NewPiece \= 'pieceY1',
-                                                    NewPiece \= 'pieceY2',
-                                                    NewPiece \= 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 1, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn + 1, PointsXOut is PointsXIn)));
-                                                    (NewPiece \= 'pieceX1',
-                                                    NewPiece \= 'pieceX2',
-                                                    NewPiece \= 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 3, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn + 3, PointsXOut is PointsXIn)));
-                                                    (NewPiece == 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn, PointsXOut is PointsXIn))).
-
-updatePoints(NewPiece,'pieceY2',PointsXIn,PointsXOut,PointsYIn,PointsYOut) :- (NewPiece \= 'pieceY1',
-                                                    NewPiece \= 'pieceY2',
-                                                    NewPiece \= 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 1, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn + 1, PointsXOut is PointsXIn)));
-                                                    (NewPiece \= 'pieceX1',
-                                                    NewPiece \= 'pieceX2',
-                                                    NewPiece \= 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn + 3, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn + 3, PointsXOut is PointsXIn)));
-                                                    (NewPiece == 'noPiece',
-                                                    if_then_else(Curr_player=='playerX', (PointsXOut is PointsXIn, PointsYOut is PointsYIn),
-                                                                                (PointsYOut is PointsYIn, PointsXOut is PointsXIn))).
 
 validateMove('pieceX1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
                                                  Nrow is LastRow+2);
@@ -245,5 +185,48 @@ endGame(Board) :- player(Curr_player),
                                                     checkMoves('pieceX1',Board),checkMoves('pieceX2',Board)),
                                                               (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board),
                                                                checkMoves('pieceY1',Board),checkMoves('pieceY2',Board))).
+areaX(Nrow,Ncol):- (Ncol@>1,
+                    Ncol@<6,
+                    Nrow@>0,
+                    Nrow@<6);
+                    (Ncol@>0,
+                    Ncol@<5,
+                    Nrow@>5,
+                    Nrow@<10).
+
+areaY(Nrow,Ncol):- (Ncol@>5,
+                    Ncol@<10,
+                    Nrow@>1,
+                    Nrow@<7);
+                    (Ncol@>4,
+                    Ncol@<9,
+                    Nrow@>5,
+                    Nrow@<10).
+
+saveElements(Board,'pieceX1',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List).
+saveElements(Board,'pieceX2',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List).
+saveElements(Board,'pieceY1',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY1'),List).
+saveElements(Board,'pieceY2',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List).
+
+getNrowNcol([]).
+getNrowNcol([Nrow-Ncol|Rest],PointsXIn,PointsXOut,'playerX'):-
+                                                  if_then_else(areaX(Nrow,Ncol),PointsXOut is PointsXIn+3,
+                                                                                PointsXOut is PointsXIn+1),
+                                                                    getNrowNcol(Rest).
+getNrowNcol([Nrow-Ncol|Rest],PointsXIn,PointsXOut,'playerY'):-
+                                                  if_then_else(areaY(Nrow,Ncol),PointsXOut is PointsXIn+3,
+                                                                                PointsXOut is PointsXIn+1),
+                                                                    getNrowNcol(Rest).
+calculatePoints(Board):-        saveElements(Board,'pieceX1',List),
+                                saveElements(Board,'pieceX2',List2),
+                                append(List,List2,FinalListX),
+                                getNrowNcol(FinalListX,0,PointsX,'playerX'),
+                                saveElements(Board,'pieceY1',List3),
+                                saveElements(Board,'pieceY2',List4),
+                                append(List3,List4,FinalListY),
+                                getNrowNcol(FinalListY,0,PointsY,'playerY'),
+                                nl,
+                                write(PointsX),nl,
+                                write(PointsY),nl.
 
 checkWinner(PointsX,PointsY) :- if_then_else(PointsX@>PointsY,write('The winner is PlayerY'),write('The winner is PlayerX')).

@@ -72,8 +72,9 @@ mainMenu :- printMainMenu,
 
 readInput(0) :- mainMenu.
 
-readInput(1) :- initialBoard(Board),printFinalBoard(Board),
-                play(Board,0,0).
+readInput(1) :- finalBoard(Board),printFinalBoard(Board),
+                play(Board),
+                mainMenu.
 /*
 readInput(2) :-
 
