@@ -1,9 +1,9 @@
-  :-use_module(library(lists)).
+:-use_module(library(lists)).
   :-use_module(library(random)).
 
   play(Board) :- chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut),nl,nl,
-                 if_then_else(endGame(Board),play(BoardOut),(nl,write('End Game'),nl,calculatePoints(Board,PointsX,PointsY),checkWinner(PointsX,PointsY))).
+                 if_then_else(endGame(Board),play(BoardOut),(nl,write('End Game'),nl,checkWinner(PointsXOut,PointsYOut))).
 
   chooseSourceCoords(RowSource, ColSource,Board,Piece) :-  repeat,
                                                             player(Curr_player),nl,
@@ -56,11 +56,104 @@
                                                  Piece \= 'noPiece'.
 
   validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut) :- checkIfCanMove(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut2),
-                                                                            validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
                                                                             setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut).
 
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceX1',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                          NewPiece \= 'empty',
+                                                          if_then_else((NewPiece=='noPiece'), (chooseNewJump(Nrow, Ncol,Row,Col,'pieceX1'),checkIfCanMove(Col,Row,Ncol,Nrow,Board,'pieceX1',BoardOut), LastCol==Ncol, LastRow==Nrow,Ncol==Col,Nrow==Row),
+                                                          (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'), (choosePieceToRemove(Board, BoardOut, 'pieceX1'),  validateMove('pieceX1', LastCol, LastRow, Ncol, Nrow)),(validateMove(Piece, LastCol, LastRow, Ncol, Nrow),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut))))).
 
-  choosePieceToRemove(Board, BoardOut, 'pieceX1') :- repeat, write('What is the piece that you want remove?'),
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow, Board,'pieceX2',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                        NewPiece \= 'empty',
+                                                        if_then_else((NewPiece=='noPiece'),  (chooseNewJump(Nrow, Ncol,Row,Col,'pieceX2'),checkIfCanMove(Col,Row,Ncol,Nrow,Board,'pieceX2',BoardOut), LastCol==Ncol, LastRow==Nrow,Ncol==Col,Nrow==Row),
+                                                        (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'),choosePieceToRemove(Board, BoardOut, 'pieceX2'),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)))).
+
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY1',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                        NewPiece \= 'empty',
+                                                        if_then_else((NewPiece=='noPiece'),  (chooseNewJump(Nrow, Ncol,Row,Col,'pieceY1'),checkIfCanMove(Col,Row,Ncol,Nrow,Board,'pieceY1',BoardOut), LastCol==Ncol, LastRow==Nrow,Ncol==Col,Nrow==Row),
+                                                        (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),choosePieceToRemove(Board, BoardOut, 'pieceY1'),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)))).
+
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY2',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+                                                        NewPiece \= 'empty',
+                                                        if_then_else((NewPiece=='noPiece'),  (chooseNewJump(Nrow, Ncol,Row,Col,'pieceY2'),checkIfCanMove(Col,Row,Ncol,Nrow,Board,'pieceY2',BoardOut), LastCol==Ncol, LastRow==Nrow,Ncol==Col,Nrow==Row),
+                                                        (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),choosePieceToRemove(Board, BoardOut, 'pieceY2'),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)))).
+
+
+  validateMove('pieceX1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
+                                                   Nrow is LastRow+2);
+                                                   (Ncol is LastCol,
+                                                   Nrow is LastRow+2);
+                                                   (Nrow is LastRow,
+                                                   Ncol is LastCol+2).
+
+  validateMove('pieceX2', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
+                                                  Nrow is LastRow);
+                                                  (Ncol is LastCol,
+                                                  Nrow is LastRow+2);
+                                                  (Nrow is LastRow-2,
+                                                  Ncol is LastCol+2).
+
+  validateMove('pieceY1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol-2,
+                                                  Nrow is LastRow+2);
+                                                  (Ncol is LastCol+2,
+                                                  Nrow is LastRow+2);
+                                                  (Nrow is LastRow,
+                                                  Ncol is LastCol-2).
+
+  validateMove('pieceY2', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol-2,
+                                                  Nrow is LastRow-2);
+                                                  (Ncol is LastCol-2,
+                                                  Nrow is LastRow);
+                                                  (Nrow is LastRow-2,
+                                                  Ncol is LastCol).
+
+
+                                                  chooseNewJump(LastRow,LastCol,Row,Col,'pieceX1') :- repeat,write('You need jump one more time!'),
+                                                                       nl,
+                                                                       write('Please enter a position (A...I)'),
+                                                                       nl,
+                                                                       getChar(ColLetter),
+                                                                       once(letterToNumber(ColLetter, Col)),
+                                                                       write('Please enter a position (1...9)'),
+                                                                       nl,
+                                                                       getCode(Row),
+                                                                       /*trace,*/
+                                                                       validateMove('pieceX1', LastCol, LastRow, Col, Row).
+
+                                                  chooseNewJump(LastRow,LastCol,Row,Col,'pieceX2') :- repeat,write('You need jump one more time!'),
+                                                                                          nl,
+                                                                                          write('Please enter a position (A...I)'),
+                                                                                          nl,
+                                                                                          getChar(ColLetter),
+                                                                                          once(letterToNumber(ColLetter, Col)),
+                                                                                          write('Please enter a position (1...9)'),
+                                                                                          nl,
+                                                                                          getCode(Row),
+                                                                                          validateMove('pieceX2', LastCol, LastRow, Col, Row).
+
+                                                  chooseNewJump(LastRow,LastCol,Row,Col,'pieceY1') :- repeat,write('You need jump one more time!'),
+                                                                                                             nl,
+                                                                                                             write('Please enter a position (A...I)'),
+                                                                                                             nl,
+                                                                                                             getChar(ColLetter),
+                                                                                                             once(letterToNumber(ColLetter, Col)),
+                                                                                                             write('Please enter a position (1...9)'),
+                                                                                                             nl,
+                                                                                                             getCode(Row),
+                                                                                                             validateMove('pieceY1', LastCol, LastRow, Col, Row).
+
+                                                  chooseNewJump(LastRow,LastCol,Row,Col,'pieceY2') :- repeat,write('You need jump one more time!'),
+                                                                                                                                nl,
+                                                                                                                                write('Please enter a position (A...I)'),
+                                                                                                                                nl,
+                                                                                                                                getChar(ColLetter),
+                                                                                                                                once(letterToNumber(ColLetter, Col)),
+                                                                                                                                write('Please enter a position (1...9)'),
+                                                                                                                                nl,
+                                                                                                                                getCode(Row),
+                                                                                                                                validateMove('pieceY2', LastCol, LastRow, Col, Row).
+
+choosePieceToRemove(Board, BoardOut, 'pieceX1') :- repeat, write('What is the piece that you want remove?'),
                                           nl,
                                           write('Please enter a position (A...I)'),
                                           nl,
@@ -108,125 +201,29 @@ choosePieceToRemove(Board, BoardOut, 'pieceY2') :- repeat, write('What is the pi
                                         checkIfCanRemove(Board, Col, Row, 'pieceY2'),
                                         setPiece(Board,Row,Col,'noPiece',BoardOut).
 
-  checkIfCanRemove(Board, Col, Row, 'pieceX1') :- getPiece(Board, Row, Col, NewPiece),
-                                                  NewPiece \= 'empty',
-                                                  NewPiece \= 'pieceY1',
-                                                  NewPiece \= 'pieceY2',
-                                                  NewPiece \= 'noPiece'.
+checkIfCanRemove(Board, Col, Row, 'pieceX1') :- getPiece(Board, Row, Col, NewPiece),
+                                                NewPiece \= 'empty',
+                                                NewPiece \= 'pieceY1',
+                                                NewPiece \= 'pieceY2',
+                                                NewPiece \= 'noPiece'.
 
-  checkIfCanRemove(Board, Col, Row, 'pieceX2') :- getPiece(Board, Row, Col, NewPiece),
-                                                  NewPiece \= 'empty',
-                                                  NewPiece \= 'pieceY1',
-                                                  NewPiece \= 'pieceY2',
-                                                  NewPiece \= 'noPiece'.
+checkIfCanRemove(Board, Col, Row, 'pieceX2') :- getPiece(Board, Row, Col, NewPiece),
+                                                NewPiece \= 'empty',
+                                                NewPiece \= 'pieceY1',
+                                                NewPiece \= 'pieceY2',
+                                                NewPiece \= 'noPiece'.
 
-  checkIfCanRemove(Board, Col, Row, 'pieceY1') :- getPiece(Board, Row, Col, NewPiece),
-                                                  NewPiece \= 'empty',
-                                                  NewPiece \= 'pieceX1',
-                                                  NewPiece \= 'pieceX2',
-                                                  NewPiece \= 'noPiece'.
+checkIfCanRemove(Board, Col, Row, 'pieceY1') :- getPiece(Board, Row, Col, NewPiece),
+                                                NewPiece \= 'empty',
+                                                NewPiece \= 'pieceX1',
+                                                NewPiece \= 'pieceX2',
+                                                NewPiece \= 'noPiece'.
 
-  checkIfCanRemove(Board, Col, Row, 'pieceY2') :- getPiece(Board, Row, Col, NewPiece),
-                                                  NewPiece \= 'empty',
-                                                  NewPiece \= 'pieceX1',
-                                                  NewPiece \= 'pieceX2',
-                                                  NewPiece \= 'noPiece'.
-
-  chooseNewJump(LastRow,LastCol,Row,Col,'pieceX1') :- repeat,write('You need jump one more time!'),
-                     nl,
-                     write('Please enter a position (A...I)'),
-                     nl,
-                     getChar(ColLetter),
-                     once(letterToNumber(ColLetter, Col)),
-                     write('Please enter a position (1...9)'),
-                     nl,
-                     getCode(Row),
-                     trace,
-                     validateMove('pieceX1', LastCol, LastRow, Col, Row).
-
-chooseNewJump(LastRow,LastCol,Row,Col,'pieceX2') :- repeat,write('You need jump one more time!'),
-                                        nl,
-                                        write('Please enter a position (A...I)'),
-                                        nl,
-                                        getChar(ColLetter),
-                                        once(letterToNumber(ColLetter, Col)),
-                                        write('Please enter a position (1...9)'),
-                                        nl,
-                                        getCode(Row),
-                                        validateMove('pieceX2', LastCol, LastRow, Col, Row).
-
-chooseNewJump(LastRow,LastCol,Row,Col,'pieceY1') :- repeat,write('You need jump one more time!'),
-                                                           nl,
-                                                           write('Please enter a position (A...I)'),
-                                                           nl,
-                                                           getChar(ColLetter),
-                                                           once(letterToNumber(ColLetter, Col)),
-                                                           write('Please enter a position (1...9)'),
-                                                           nl,
-                                                           getCode(Row),
-                                                           validateMove('pieceY1', LastCol, LastRow, Col, Row).
-
-chooseNewJump(LastRow,LastCol,Row,Col,'pieceY2') :- repeat,write('You need jump one more time!'),
-                                                                              nl,
-                                                                              write('Please enter a position (A...I)'),
-                                                                              nl,
-                                                                              getChar(ColLetter),
-                                                                              once(letterToNumber(ColLetter, Col)),
-                                                                              write('Please enter a position (1...9)'),
-                                                                              nl,
-                                                                              getCode(Row),
-                                                                              validateMove('pieceY2', LastCol, LastRow, Col, Row).
-
-
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceX1',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
-                                                          NewPiece \= 'empty',
-                                                          if_then_else((NewPiece=='noPiece'), (chooseNewJump(Nrow,Ncol,Row,Col,'pieceX1'), Nrow is LastRow, Ncol is LastCol,LastRow is Row, LastCol is Col ,checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceX1',BoardOut)),
-                                                          (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'),(choosePieceToRemove(Board, BoardOut, 'pieceX1')),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)))).
-
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow, Board,'pieceX2',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
-                                                        NewPiece \= 'empty',
-                                                        if_then_else((NewPiece=='noPiece'), (chooseNewJump(Nrow,Ncol,Row,Col,'pieceX2'), LastRow is Nrow, LastCol is Ncol,Nrow is Row, Ncol is Col ,checkIfCanMove(Col,Row,LastCol,LastRow,Board,'pieceX2',BoardOut)),
-                                                        (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'),(choosePieceToRemove(Board,BoardOut,'pieceX2')), setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)))).
-
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY1',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
-                                                        NewPiece \= 'empty',
-                                                        if_then_else((NewPiece=='noPiece'),(chooseNewJump(Nrow,Ncol,Row,Col,'pieceY1'), LastRow is Nrow, LastCol is Ncol,Nrow is Row, Ncol is Col ,checkIfCanMove(Col,Row,LastCol,LastRow,Board,'pieceY1',BoardOut)),
-                                                        (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),(choosePieceToRemove(Board,BoardOut,'pieceY1')), setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)))).
-
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY2',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
-                                                        NewPiece \= 'empty',
-                                                        if_then_else((NewPiece=='noPiece'),(chooseNewJump(Nrow,Ncol,Row,Col,'pieceY2'), LastRow is Nrow, LastCol is Ncol,Nrow is Row, Ncol is Col,checkIfCanMove(Col,Row,LastCol,LastRow,Board,'pieceY2',BoardOut)),
-                                                        (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),(choosePieceToRemove(Board, BoardOut,'pieceY2')),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)))).
-
-
-  validateMove('pieceX1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
-                                                   Nrow is LastRow+2);
-                                                   (Ncol is LastCol,
-                                                   Nrow is LastRow+2);
-                                                   (Nrow is LastRow,
-                                                   Ncol is LastCol+2).
-
-  validateMove('pieceX2', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
-                                                  Nrow is LastRow);
-                                                  (Ncol is LastCol,
-                                                  Nrow is LastRow+2);
-                                                  (Nrow is LastRow-2,
-                                                  Ncol is LastCol+2).
-
-  validateMove('pieceY1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol-2,
-                                                  Nrow is LastRow+2);
-                                                  (Ncol is LastCol+2,
-                                                  Nrow is LastRow+2);
-                                                  (Nrow is LastRow,
-                                                  Ncol is LastCol-2).
-
-  validateMove('pieceY2', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol-2,
-                                                  Nrow is LastRow-2);
-                                                  (Ncol is LastCol-2,
-                                                  Nrow is LastRow);
-                                                  (Nrow is LastRow-2,
-                                                  Ncol is LastCol).
-
+checkIfCanRemove(Board, Col, Row, 'pieceY2') :- getPiece(Board, Row, Col, NewPiece),
+                                                NewPiece \= 'empty',
+                                                NewPiece \= 'pieceX1',
+                                                NewPiece \= 'pieceX2',
+                                                NewPiece \= 'noPiece'.
 
   getPiece(Board, Nrow, Ncol, Piece) :- getElePos(Nrow, Board, Row),
                                         getElePos(Ncol, Row, Piece).
@@ -345,7 +342,7 @@ chooseNewJump(LastRow,LastCol,Row,Col,'pieceY2') :- repeat,write('You need jump 
                                                                                   PointsYOut is PointsYIn+1),
                                                                       getNrowNcol(Rest,PointsYIn,PointsYOut,'playerY').
 
-  calculatePoints(Board, PointsX, PointsY):- saveElements(Board,'pieceX1',List),
+  calculatePoints(Board):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
                            append(List,List2,FinalListX),
                            getNrowNcol(FinalListX,0,PointsX,'playerX'),
