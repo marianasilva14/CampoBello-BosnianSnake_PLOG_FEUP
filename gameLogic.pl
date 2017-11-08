@@ -3,7 +3,7 @@
 
   play(Board) :- chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut),nl,nl,
-                 if_then_else(endGame(Board),play(BoardOut),(nl,write('End Game'),nl,checkWinner(PointsXOut,PointsYOut))).
+                 if_then_else(endGame(Board),play(BoardOut),(nl,write('End Game'),nl,calculatePoints(Board,PointsX,PointsY),checkWinner(PointsX,PointsY))).
 
   chooseSourceCoords(RowSource, ColSource,Board,Piece) :-  repeat,
                                                             player(Curr_player),nl,
@@ -55,9 +55,9 @@
                                                  Piece \= 'empty',
                                                  Piece \= 'noPiece'.
 
-  validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut) :- checkIfCanMove(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut2),
-                                                                            validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
-                                                                            setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut).
+  validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut) :- checkIfCanMove(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut2,Row,Col),
+                                                                            validateMove(Piece, LastCol, LastRow, Col, Row),
+                                                                            setPiece(BoardOut2,Row,Col,Piece,BoardOut).
 
 
   choosePieceToRemove(Board, BoardOut, 'pieceX1') :- repeat, write('What is the piece that you want remove?'),
@@ -132,22 +132,35 @@ choosePieceToRemove(Board, BoardOut, 'pieceY2') :- repeat, write('What is the pi
                                                   NewPiece \= 'pieceX2',
                                                   NewPiece \= 'noPiece'.
 
+  chooseNewJump(Row, Col) :- repeat, write('You need jump one more time!'),
+                     nl,
+                     write('Please enter a position (A...I)'),
+                     nl,
+                     getChar(ColLetter),
+                     once(letterToNumber(ColLetter, Col)),
+                     write('Please enter a position (1...9)'),
+                     nl,
+                     getCode(Row).
 
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceX1',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceX1',BoardOut,Row,Col) :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                           NewPiece \= 'empty',
-                                                          if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'),(choosePieceToRemove(Board, BoardOut, 'pieceX1')),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)).
+                                                          if_then_else((NewPiece=='noPiece'), chooseNewJump(Row,Col),(Row is Nrow,Col is Ncol,
+                                                          (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'),(choosePieceToRemove(Board, BoardOut, 'pieceX1')),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut))))).
 
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow, Board,'pieceX2',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow, Board,'pieceX2',BoardOut,Row,Col) :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                         NewPiece \= 'empty',
-                                                        if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'),(choosePieceToRemove(Board,BoardOut,'pieceX2')), setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)).
+                                                        if_then_else((NewPiece=='noPiece'), chooseNewJump(Row,Col),(Row is Nrow,Col is Ncol,
+                                                        (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'),(choosePieceToRemove(Board,BoardOut,'pieceX2')), setPiece(Board,LastRow,LastCol,'noPiece',BoardOut))))).
 
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY1',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY1',BoardOut,Row,Col) :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                         NewPiece \= 'empty',
-                                                        if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),(choosePieceToRemove(Board,BoardOut,'pieceY1')), setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)).
+                                                        if_then_else((NewPiece=='noPiece'), chooseNewJump(Row,Col),(Row is Nrow,Col is Ncol,
+                                                        (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),(choosePieceToRemove(Board,BoardOut,'pieceY1')), setPiece(Board,LastRow,LastCol,'noPiece',BoardOut))))).
 
-  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY2',BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
+  checkIfCanMove(Ncol,Nrow,LastCol,LastRow,Board,'pieceY2',BoardOut,Row,Col) :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                         NewPiece \= 'empty',
-                                                        if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),(choosePieceToRemove(Board, BoardOut,'pieceY2')),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut)).
+                                                        if_then_else((NewPiece=='noPiece'), chooseNewJump(Row,Col),(Row is Nrow,Col is Ncol,
+                                                        (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'),(choosePieceToRemove(Board, BoardOut,'pieceY2')),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut))))).
 
 
   validateMove('pieceX1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
@@ -296,7 +309,7 @@ choosePieceToRemove(Board, BoardOut, 'pieceY2') :- repeat, write('What is the pi
                                                                                   PointsYOut is PointsYIn+1),
                                                                       getNrowNcol(Rest,PointsYIn,PointsYOut,'playerY').
 
-  calculatePoints(Board):- saveElements(Board,'pieceX1',List),
+  calculatePoints(Board, PointsX, PointsY):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
                            append(List,List2,FinalListX),
                            getNrowNcol(FinalListX,0,PointsX,'playerX'),
