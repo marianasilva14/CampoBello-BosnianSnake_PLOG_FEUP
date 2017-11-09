@@ -66,6 +66,7 @@ printMainMenu:-
 
 
 mainMenu :- printMainMenu,
+            now(X), setrand(X),
             read(Input),
             set_mode_game(Input),
             readInput(Input).
@@ -75,10 +76,13 @@ readInput(0) :- mainMenu.
 readInput(1) :- initialBoard(Board),printFinalBoard(Board),
                 play(Board),
                 mainMenu.
-/*
-readInput(2) :-
 
-readInput(3) :-*/
+readInput(2) :- initialBoard(Board), printFinalBoard(Board),
+                set_user_is('pc'),
+                play(Board),
+                mainMenu.
+
+/*readInput(3) :-*/
 
 readInput(4) :- printHowToPlayMenu,
                 read(Input),

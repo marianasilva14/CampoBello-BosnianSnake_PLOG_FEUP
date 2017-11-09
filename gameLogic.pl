@@ -1,11 +1,15 @@
 :-use_module(library(lists)).
-  :-use_module(library(random)).
+:-use_module(library(random)).
+:-use_module(library(system)).
 
   play(Board) :- chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece, BoardOut),nl,nl,
                  if_then_else(endGame(Board),play(BoardOut),(nl,write('End Game'),nl,checkWinner(PointsXOut,PointsYOut))).
 
-  chooseSourceCoords(RowSource, ColSource,Board,Piece) :-  repeat,
+  chooseSourceCoords(RowSource, ColSource,Board,Piece) :-   mode_game(Curr_mode),
+                                                            user_is(Curr_user),
+                                                            if_then_else((Curr_mode == 1; Curr_user=='player'),
+                                                            (repeat,
                                                             player(Curr_player),nl,
                                                             write('It is the turn of '),
                                                             write(Curr_player), nl,nl,
@@ -16,7 +20,11 @@
                                                             write('Please enter a position (1...9)'),
                                                             nl,
                                                             getCode(RowSource),
-                                                            validateSourcePiece(ColSource, RowSource,Board,Piece).
+                                                            validateSourcePiece(ColSource, RowSource,Board,Piece)),
+                                                            (listOfValidMoveX(Board,List),length(List,LengthOfList),
+                                                                              random(0,LengthOfList,Index),
+                                                                              nth0(Index,List,Piece-RowSource-ColSource))),
+                                                                              write(List), write(' chosen '), write(Piece), write(RowSource), write(ColSource).
 
   chooseDestinyCoords(RowSource, ColSource, Board,Piece, BoardOut) :- repeat,nl,
                                                                       write('What is the destiny of your piece?'),
@@ -32,8 +40,6 @@
                                                                       player(Curr_player),
                                                                       if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX')).
 
-
-
   letterToNumber('A',1).
   letterToNumber('B',2).
   letterToNumber('C',3).
@@ -44,9 +50,17 @@
   letterToNumber('H',8).
   letterToNumber('I',9).
 
-  validateSourcePiece(Ncol, Nrow,Board,Piece) :- player(Curr_player),
-                                                 getPiece(Board, Nrow, Ncol, Piece),
-                                                 if_then_else(Curr_player == 'playerX',
+
+  listOfValidMoveX(Board,FinalListX):- setof('pieceX1'-Nrow-Ncol,validateSourcePiece(Ncol,Nrow,Board,'pieceX1'),List),
+                                setof('pieceX2'-Nrow-Ncol,validateSourcePiece(Ncol,Nrow,Board,'pieceX2'),List2),
+                                append(List,List2,FinalListX).
+
+  listOfValidMoveY(Board,FinalListY):-setof('pieceY1'-Nrow-Ncol,validateSourcePiece(Ncol,Nrow,Board,'pieceX1'),List),
+                                setof('pieceY2'-Nrow-Ncol,validateSourcePiece(Ncol,Nrow,Board,'pieceX2'),List2),
+                                append(List,List2,FinalListY).
+
+  validateSourcePiece(Ncol, Nrow,Board,Piece) :- getPiece(Board, Nrow, Ncol, Piece),
+                                                 if_then_else((Piece=='pieceX1';Piece=='pieceX2'),
                                                  (Piece \= 'pieceY1',
                                                  Piece \= 'pieceY2'),
                                                  (Piece \= 'pieceX1',
@@ -83,7 +97,7 @@ checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut) :- getPiece(Boar
                                                                         (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'), (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
                                                                         choosePieceToRemove(Board, BoardOut2, Piece),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
                                                                         (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
-                                                                        setPiece(BoardOut2,LastRow,LastCol,Piece,BoardOut))))),
+                                                                        setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
                                                                 printFinalBoard(BoardOut).
 
 checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
@@ -102,7 +116,7 @@ checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut) :- getPiece(Boar
                                                   (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'), (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
                                                   choosePieceToRemove(Board, BoardOut2, Piece),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
                                                   (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
-                                                  setPiece(BoardOut2,LastRow,LastCol,Piece,BoardOut))))),
+                                                  setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
                                                   printFinalBoard(BoardOut).
 
 
@@ -179,23 +193,25 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                 NewPiece \= 'noPiece'.
 
 
-  getPiece(Board, Nrow, Ncol, Piece) :- getElePos(Nrow, Board, Row),
-                                        getElePos(Ncol, Row, Piece).
+  % getPiece(Board, Nrow, Ncol, Piece) :- getElePos(Nrow, Board, Row),
+  %                                       getElePos(Ncol, Row, Piece).
+
+  getPiece(Board, Nrow, Ncol, Piece) :-  getElement(Board,Nrow,Ncol,Piece).
 
   getElePos(1, [Element|_], Element).
-  getElePos(Pos, [_|Remainder], Element) :- Pos > 1,
+  getElePos(Pos, [_|Remainder], Element) :- Pos @> 1,
                                             Next is Pos-1,
                                             getElePos(Next, Remainder, Element).
 
   setPiece(BoardIn, Nrow, Ncol, Piece, BoardOut) :- setOnRow(Nrow, BoardIn, Ncol, Piece, BoardOut).
 
   setOnRow(1, [Row|Remainder], Ncol, Piece, [Newrow|Remainder]):- setOnCol(Ncol, Row, Piece, Newrow).
-  setOnRow(Pos, [Row|Remainder], Ncol, Piece, [Row|Newremainder]):- Pos > 1,
+  setOnRow(Pos, [Row|Remainder], Ncol, Piece, [Row|Newremainder]):- Pos @> 1,
                                                                     Next is Pos-1,
                                                                     setOnRow(Next, Remainder, Ncol, Piece, Newremainder).
 
   setOnCol(1, [_|Remainder], Piece, [Piece|Remainder]).
-  setOnCol(Pos, [X|Remainder], Piece, [X|Newremainder]):- Pos > 1,
+  setOnCol(Pos, [X|Remainder], Piece, [X|Newremainder]):- Pos @> 1,
                                                           Next is Pos-1,
                                                           setOnCol(Next, Remainder, Piece, Newremainder).
 

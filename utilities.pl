@@ -8,9 +8,11 @@ getCode(Input) :- get_code(_TempInput),
 
 :-dynamic player/1.
 :-dynamic mode_game/1.
+:-dynamic user_is/1.
 
 mode_game(1).
 player(playerX).
+user_is(player).
 
 set_player(Player):-
   nonvar(Player),
@@ -22,3 +24,8 @@ set_mode_game(Newmode):-
   integer(Newmode),
   retract(mode_game(_)),
   asserta(mode_game(Newmode)).
+
+set_user_is(NewPlayer):-
+  nonvar(NewPlayer),
+  retract(user_is(_)),
+  asserta(user_is(NewPlayer)).
