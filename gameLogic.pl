@@ -29,7 +29,6 @@
                                                                       nl,
                                                                       getCode(RowDestiny),
                                                                       validateDestinyPiece(ColSource,RowSource,ColDestiny, RowDestiny,Board,Piece, BoardOut),
-                                                                      printFinalBoard(BoardOut),
                                                                       player(Curr_player),
                                                                       if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX')).
 
@@ -59,49 +58,52 @@ validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece, BoardOut) :- if_the
                                                                             checkIfCanMoveX(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut),
                                                                             checkIfCanMoveY(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut)).
 
-checkIfIsNotNoPiece(Board,Row,Col,FinalRow,FinalCol,SecondPiece):-repeat,chooseNewJump(Row, Col,FinalRow,FinalCol,'pieceX1'),
-                                                        getPiece(Board, FinalRow, FinalCol, SecondPiece),
+checkIfIsNotNoPiece(Board,BoardOut,Row,Col,FinalRow,FinalCol,Piece):-repeat,chooseNewJump(Board,BoardOut,Row, Col,FinalRow,FinalCol,Piece),
+                                                        getPiece(BoardOut, FinalRow, FinalCol, SecondPiece),
                                                         SecondPiece \= 'noPiece'.
 
-printBoardAfterJump(Row,Col,Board,BoardOut,Piece) :- setPiece(Board,Row,Col,Piece,BoardOut),
-                                           printFinalBoard(BoardOut),nl.
+printBoardAfterJump(Row,Col,LastRow,LastCol,Board,BoardOut,Piece) :- setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
+                                                                    setPiece(BoardOut2,Row,Col,Piece,BoardOut),
+                                                                    printFinalBoard(BoardOut),nl.
 
 
 checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
                                                           NewPiece \= 'empty',
                                                           if_then_else((NewPiece=='noPiece'),
-                                                                    (printBoardAfterJump(Nrow,Ncol,Board,BoardOut,Piece),(chooseNewJump(Nrow, Ncol,Row,Col,Piece,Board,BoardOut2),getPiece(BoardOut2,Row,Col,Piece2),
-                                                                if_then_else(Piece2=='noPiece', (checkIfIsNotNoPiece(BoardOut2,Row,Col,FinalRow,FinalCol,SecondPiece),
+                                                                    (printBoardAfterJump(Nrow,Ncol,LastRow,LastCol,Board,BoardOut2,Piece),(chooseNewJump(BoardOut2,BoardOut3,Nrow, Ncol,Row,Col,Piece),getPiece(Board,Row,Col,Piece2),
+                                                                if_then_else(Piece2=='noPiece', (checkIfIsNotNoPiece(BoardOut3,BoardOut4,Row,Col,FinalRow,FinalCol,SecondPiece),
                                                                                                 (if_then_else((SecondPiece=='pieceY1';SecondPiece=='pieceY2'),
-                                                                (validateMove(Piece, Col, Row, FinalCol, FinalRow),choosePieceToRemove(BoardOut, BoardOut2, Piece),
-                                                                setPiece(BoardOut2,FinalRow,FinalCol,Piece,BoardOut)),(validateMove(SecondPiece, Col, Row, FinalCol, FinalRow),
-                                                                setPiece(BoardOut2,Row,Col,'noPiece',BoardOut3), setPiece(BoardOut3,FinalRow,FinalCol,Piece,BoardOut))))),
+                                                                (validateMove(Piece, Col, Row, FinalCol, FinalRow),choosePieceToRemove(BoardOut4, BoardOut5, Piece),
+                                                                setPiece(BoardOut5,FinalRow,FinalCol,Piece,BoardOut)),(validateMove(SecondPiece, Col, Row, FinalCol, FinalRow),
+                                                                setPiece(BoardOut4,Row,Col,'noPiece',BoardOut5), setPiece(BoardOut5,FinalRow,FinalCol,Piece,BoardOut))))),
                                                                                                 (if_then_else((Piece2=='pieceY1';Piece2=='pieceY2'),
-                                                                                                (validateMove(Piece, Ncol, Nrow, Col, Row),choosePieceToRemove(BoardOut2, BoardOut3, Piece),
-                                                                                                setPiece(BoardOut3,Row,Col,Piece,BoardOut)),(validateMove(Piece2, Ncol, Nrow, Col, Row),
-                                                                                                setPiece(BoardOut2,Nrow,Ncol,'noPiece',BoardOut3), setPiece(BoardOut3,Row,Col,Piece,BoardOut))))))),
+                                                                                                (validateMove(Piece, Ncol, Nrow, Col, Row),choosePieceToRemove(BoardOut3, BoardOut4, Piece),
+                                                                                                setPiece(BoardOut4,Row,Col,Piece,BoardOut)),(validateMove(Piece2, Ncol, Nrow, Col, Row),
+                                                                                                setPiece(BoardOut3,Nrow,Ncol,'noPiece',BoardOut4), setPiece(BoardOut4,Row,Col,Piece,BoardOut))))))),
                                                                         (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'), (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
-                                                                        choosePieceToRemove(Board, BoardOut2, Piece),setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut)),
+                                                                        choosePieceToRemove(Board, BoardOut2, Piece),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
                                                                         (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
-                                                                        setPiece(BoardOut2,LastRow,LastCol,Piece,BoardOut))))).
+                                                                        setPiece(BoardOut2,LastRow,LastCol,Piece,BoardOut))))),
+                                                                printFinalBoard(BoardOut).
 
 checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut) :- getPiece(Board, Nrow, Ncol, NewPiece),
-                                                      NewPiece \= 'empty',
-                                                      if_then_else((NewPiece=='noPiece'),
-                                                                (printBoardAfterJump(Nrow,Ncol,Board,BoardOut,Piece),(chooseNewJump(Nrow, Ncol,Row,Col,Piece,Board,BoardOut2),getPiece(BoardOut2,Row,Col,Piece2),
-                                                            if_then_else(Piece2=='noPiece', (checkIfIsNotNoPiece(BoardOut2,Row,Col,FinalRow,FinalCol,SecondPiece),
-                                                                                                (if_then_else((SecondPiece=='pieceX1';SecondPiece=='pieceX2'),
-                                                            (validateMove(Piece, Col, Row, FinalCol, FinalRow),choosePieceToRemove(BoardOut2, BoardOut3, Piece),
-                                                            setPiece(BoardOut3,FinalRow,FinalCol,Piece,BoardOut)),(validateMove(SecondPiece, Col, Row, FinalCol, FinalRow),
-                                                            setPiece(BoardOut2,Row,Col,'noPiece',BoardOut3), setPiece(BoardOut3,FinalRow,FinalCol,Piece,BoardOut))))),
-                                                                                        (if_then_else((Piece2=='pieceX1';Piece2=='pieceX2'),
-                                                                                        (validateMove(Piece, Ncol, Nrow, Col, Row),choosePieceToRemove(BoardOut2, BoardOut3, Piece),
-                                                                                        setPiece(BoardOut3,Row,Col,Piece,BoardOut)),(validateMove(Piece2, Ncol, Nrow, Col, Row),
-                                                                                        setPiece(BoardOut2,Nrow,Ncol,'noPiece',BoardOut3), setPiece(BoardOut3,Row,Col,Piece,BoardOut))))))),
-                                                                    (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'), (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
-                                                                    choosePieceToRemove(Board, BoardOut2, Piece),setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut)),
-                                                                    (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
-                                                                    setPiece(BoardOut2,LastRow,LastCol,Piece,BoardOut))))).
+                                                            NewPiece \= 'empty',
+                                                            if_then_else((NewPiece=='noPiece'),
+                                                                    (printBoardAfterJump(Nrow,Ncol,LastRow,LastCol,Board,BoardOut2,Piece),(chooseNewJump(BoardOut2,BoardOut3,Nrow, Ncol,Row,Col,Piece),getPiece(Board,Row,Col,Piece2),
+                                                            if_then_else(Piece2=='noPiece', (checkIfIsNotNoPiece(BoardOut3,BoardOut4,Row,Col,FinalRow,FinalCol,SecondPiece),
+                                                                                            (if_then_else((SecondPiece=='pieceY1';SecondPiece=='pieceY2'),
+                                                (validateMove(Piece, Col, Row, FinalCol, FinalRow),choosePieceToRemove(BoardOut4, BoardOut5, Piece),
+                                                setPiece(BoardOut5,FinalRow,FinalCol,Piece,BoardOut)),(validateMove(SecondPiece, Col, Row, FinalCol, FinalRow),
+                                                setPiece(BoardOut4,Row,Col,'noPiece',BoardOut5), setPiece(BoardOut5,FinalRow,FinalCol,Piece,BoardOut))))),
+                                                (if_then_else((Piece2=='pieceX1';Piece2=='pieceX2'),
+                                                (validateMove(Piece, Ncol, Nrow, Col, Row),choosePieceToRemove(BoardOut3, BoardOut4, Piece),
+                                                setPiece(BoardOut4,Row,Col,Piece,BoardOut)),(validateMove(Piece2, Ncol, Nrow, Col, Row),
+                                                setPiece(BoardOut3,Nrow,Ncol,'noPiece',BoardOut4), setPiece(BoardOut4,Row,Col,Piece,BoardOut))))))),
+                                                  (if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'), (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),
+                                                  choosePieceToRemove(Board, BoardOut2, Piece),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
+                                                  (validateMove(Piece, LastCol, LastRow, Ncol, Nrow),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
+                                                  setPiece(BoardOut2,LastRow,LastCol,Piece,BoardOut))))),
+                                                  printFinalBoard(BoardOut).
 
 
   validateMove('pieceX1', LastCol,LastRow,Ncol,Nrow) :- (Ncol is LastCol+2,
@@ -133,7 +135,7 @@ checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut) :- getPiece(Boar
                                                   Ncol is LastCol).
 
 
-chooseNewJump(LastRow,LastCol,Row,Col,Piece,Board,BoardOut) :- repeat,write('You need jump one more time!'),
+chooseNewJump(Board,BoardOut,LastRow,LastCol,Row,Col,Piece) :- repeat,write('You need jump one more time!'),
                                                     nl,
                                                     write('Please enter a position (A...I)'),
                                                     nl,
@@ -142,12 +144,14 @@ chooseNewJump(LastRow,LastCol,Row,Col,Piece,Board,BoardOut) :- repeat,write('You
                                                     write('Please enter a position (1...9)'),
                                                     nl,
                                                     getCode(Row),
-                                                    /*trace,*/
                                                     validateMove(Piece, LastCol, LastRow, Col, Row),
-                                                    printBoardAfterJump(Row,Col,Board,BoardOut,Piece).
+                                                    setPiece(Board,Row,Col,Piece,BoardOut2),
+                                                    setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
+                                                    printFinalBoard(BoardOut).
 
 
-choosePieceToRemove(Board, BoardOut, Piece) :- repeat, write('What is the piece that you want remove?'),
+
+choosePieceToRemove(Board, BoardOut, Piece) :- repeat,nl, write('What is the piece that you want remove?'),
                                           nl,
                                           write('Please enter a position (A...I)'),
                                           nl,
@@ -157,18 +161,18 @@ choosePieceToRemove(Board, BoardOut, Piece) :- repeat, write('What is the piece 
                                           nl,
                                           getCode(Row),
                                           if_then_else((Piece=='pieceX1';Piece=='pieceX2'),
-                                          checkIfCanRemoveX(Board, Col, Row, Piece),
-                                          checkIfCanRemoveY(Board, Col, Row, Piece)).
-                                          setPiece(Board,Row,Col,'noPiece',BoardOut),
-                                          printFinalBoard(BoardOut).
+                                          checkIfCanRemoveX(Board, Col, Row),
+                                          checkIfCanRemoveY(Board, Col, Row)),
+                                          setPiece(Board,Row,Col,'noPiece',BoardOut).
 
-checkIfCanRemoveX(Board, Col, Row, Piece) :- getPiece(Board, Row, Col, NewPiece),
+
+checkIfCanRemoveX(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                 NewPiece \= 'empty',
                                                 NewPiece \= 'pieceY1',
                                                 NewPiece \= 'pieceY2',
                                                 NewPiece \= 'noPiece'.
 
-checkIfCanRemoveY(Board, Col, Row, Piece) :- getPiece(Board, Row, Col, NewPiece),
+checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                 NewPiece \= 'empty',
                                                 NewPiece \= 'pieceX1',
                                                 NewPiece \= 'pieceX2',
