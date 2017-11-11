@@ -78,11 +78,14 @@ readInput(1) :- initialBoard(Board),printFinalBoard(Board),
                 mainMenu.
 
 readInput(2) :- initialBoard(Board), printFinalBoard(Board),
-                set_user_is('pc'),
+                set_user_is('pcX'),
                 play(Board),
                 mainMenu.
 
-/*readInput(3) :-*/
+readInput(3) :- initialBoard(Board), printFinalBoard(Board),
+                set_user_is('pcX'),
+                play(Board),
+                mainMenu.
 
 readInput(4) :- printHowToPlayMenu,
                 read(Input),
