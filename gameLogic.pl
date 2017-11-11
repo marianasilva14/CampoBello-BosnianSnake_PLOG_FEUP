@@ -7,7 +7,7 @@
                  chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece,Area, BoardOut),nl,nl,
                  if_then_else(Curr_user==pc,set_user_is('player'),set_user_is('pc')),
-                 if_then_else(endGame(Board),play(BoardOut),(nl,write('End Game'),nl,checkWinner(PointsXOut,PointsYOut))).
+                 if_then_else(endGame(BoardOut),play(BoardOut),(nl,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))).
 
   chooseSourceCoords(RowSource, ColSource,Board,Piece) :-   mode_game(Curr_mode),
                                                             user_is(Curr_user),
@@ -405,10 +405,12 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                                                   PointsYOut is PointsYIn+1),
                                                                       getNrowNcol(Rest,PointsYIn,PointsYOut,'playerY').
 
-  calculatePoints(Board):- saveElements(Board,'pieceX1',List),
+  calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
                            append(List,List2,FinalListX),
+                           write(FinalListX),
                            getNrowNcol(FinalListX,0,PointsX,'playerX'),
+                           write(PointsX),
                            saveElements(Board,'pieceY1',List3),
                            saveElements(Board,'pieceY2',List4),
                            append(List3,List4,FinalListY),
@@ -417,4 +419,5 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                            write('Points of playerX:'), write(PointsX),nl,
                            write('Points of playerY:'), write(PointsY),nl.
 
-  checkWinner(PointsX,PointsY) :- if_then_else(PointsX@>PointsY,write('The winner is PlayerY'),write('The winner is PlayerX')).
+  checkWinner(Board,PointsX,PointsY) :- calculatePoints(Board,PointsX,PointsY),
+                  if_then_else(PointsX@>PointsY,write('The winner is PlayerY'),write('The winner is PlayerX')).
