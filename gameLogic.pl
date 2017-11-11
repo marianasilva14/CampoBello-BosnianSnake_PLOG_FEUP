@@ -24,6 +24,7 @@
                                                             write('Please enter a position (1...9)'),
                                                             nl,
                                                             getCode(RowSource),
+
                                                             validateSourcePiece(ColSource, RowSource,Board,Piece)),
                                                             (nl,listOfValidSourceMoveX(Board,List),length(List,LengthOfList),
                                                                               random(0,LengthOfList,Index),
@@ -38,7 +39,10 @@
                                                                             (if_then_else(areaY1(RowSource,ColSource),Area='areaY1',
                                                                             (if_then_else(areaY2(RowSource,ColSource),Area='areaY2',true))))))),
                                                                       write('  Area of the Piece:'),write(Area),nl,
-                                                                      if_then_else((Curr_mode == 1; Curr_user=='player'),
+                                                                      listOfValidDestinyMove(List,RowSource,ColSource,Area,Board),length(List,LengthOfList),
+                                                                      write(LengthOfList),nl,write(List),
+                                                                      if_then_else(LengthOfList\=0,
+                                                                      (if_then_else((Curr_mode == 1; Curr_user=='player'),
                                                                       (repeat,nl,
                                                                       write('What is the destiny of your piece?'),
                                                                       nl,
@@ -56,7 +60,8 @@
                                                                       (write('entrei'),listOfValidDestinyMove(List, RowSource,ColSource,Area,Board),length(List,LengthOfList),
                                                                                         random(0,LengthOfList,Index),
                                                                                         nth0(Index,List,RowDestiny-ColDestiny),
-                                                                                        validateDestinyPiece(ColSource,RowSource,ColDestiny,RowDestiny,Board,Piece, Area,BoardOut))),
+                                                                                        validateDestinyPiece(ColSource,RowSource,ColDestiny,RowDestiny,Board,Piece, Area,BoardOut)))),
+                                                                                        if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX'))),
                                                                                         write(List), write(' chosen '), write(' Row: '),write(RowDestiny), write(' Col: '),
                                                                                         numberToLetter(ColDestiny,Letter),write(Letter),nl.
 
@@ -331,8 +336,11 @@ if_then_else((NewPiece=='noPiece'),
 
 
 chooseNewJump(Board,BoardOut,LastRow,LastCol,Row,Col,Piece,Area) :-mode_game(Curr_mode),
-                                                              user_is(Curr_user),
-                                                              if_then_else((Curr_mode == 1; Curr_user=='player'),
+                                                              user_is(Curr_user),trace,
+                                                              listOfValidDestinyMove(List,RowSource,ColSource,Area,Board),length(List,LengthOfList),
+                                                              write(LengthOfList),nl,write(List),trace,
+                                                              if_then_else(LengthOfList\=0,
+                                                              (if_then_else((Curr_mode == 1; Curr_user=='player'),
                                                     (repeat,write('You need jump one more time!'),
                                                     nl,
                                                     write('Please enter a position (A...I)'),
@@ -346,7 +354,8 @@ chooseNewJump(Board,BoardOut,LastRow,LastCol,Row,Col,Piece,Area) :-mode_game(Cur
                                                                       random(0,LengthOfList,Index),
                                                                       nth0(Index,List,Row-Col))),
                                                     validateMove(Area, LastCol, LastRow, Col, Row,Board),
-                                                    setPiece(Board,Row,Col,Piece,BoardOut),
+                                                    setPiece(Board,Row,Col,Piece,BoardOut)),
+                                                    true),
                                                     printFinalBoard(BoardOut).
 
 
