@@ -2,5 +2,5 @@
 :- include('menus.pl').
 :- include('displayBoard.pl').
 :- include('utilities.pl').
-
+:- include('utilities.pl').
 campoBello :- mainMenu.

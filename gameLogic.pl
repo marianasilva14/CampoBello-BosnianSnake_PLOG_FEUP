@@ -94,8 +94,8 @@
                                 setof('pieceY2'-Nrow-Ncol,validateSourcePiece(Ncol,Nrow,Board,'pieceX2'),List2),
                                 append(List,List2,FinalListY).
 
-  listOfValidDestinyMove(List,LastRow,LastCol,Area,Board) :- if_then_else(setof(Nrow-Ncol,validateMove(Area,LastCol,LastRow,Ncol,Nrow,Board),List),true,
-                                                                      findall(Nrow-Ncol,validateMove(Area,LastCol,LastRow,Ncol,Nrow,Board),List)).
+  listOfValidDestinyMove(List,LastRow,LastCol,Area,Board) :- if_then_else(setof(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List),true,
+                                                                      findall(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List)).
 
 
   validateSourcePiece(Ncol, Nrow,Board,Piece) :- getPiece(Board, Nrow, Ncol, Piece),
@@ -119,8 +119,8 @@ validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece,Area,BoardOut) :- if
                                                                             checkIfCanMoveX(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut,Area),
                                                                             checkIfCanMoveY(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut,Area)).
 
-checkIfIsNotNoPiece(Board,BoardOut,Row,Col,FinalRow,FinalCol,Piece,Area):-repeat,
-                                                        chooseNewJump(Board,BoardOut,Row, Col,FinalRow,FinalCol,Piece,Area),
+checkIfIsNotNoPiece(Board,BoardOut,LastColPiece,LastRowPiece,Row,Col,FinalRow,FinalCol,Piece,Area):-repeat,
+                                                        chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,Row, Col,FinalRow,FinalCol,Piece,Area),
                                                         getPiece(BoardOut, FinalRow, FinalCol, SecondPiece),
                                                         SecondPiece \= 'noPiece'.
 
@@ -128,100 +128,19 @@ printBoardAfterJump(Row,Col,LastRow,LastCol,Board,BoardOut,Piece) :- setPiece(Bo
                                                                     setPiece(BoardOut2,Row,Col,Piece,BoardOut),
                                                                     printFinalBoard(BoardOut),nl.
 
-  validateMove('areaX1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol==5,LastRow==3);(LastCol==5,LastRow==4)),
-                                                                (Nrow is LastRow+2,
-                                                                Ncol is LastCol),
-                                                                ((Ncol is LastCol+2,
-                                                                Nrow is LastRow+2,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty');
-                                                                (Nrow is LastRow,
-                                                                Ncol is LastCol+2,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty');
-                                                                (Nrow is LastRow+2,
-                                                                Ncol is LastCol,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty'))).
-
-  validateMove('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCol==2,LastRow==5),
-                                                                (Nrow is LastRow+2,
-                                                                Ncol is LastCol;
-                                                                (Nrow is LastRow,
-                                                                Ncol is LastCol+2)),
-                                                                ((Nrow is LastRow-2,
-                                                                Ncol is LastCol+2,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty');
-                                                                (Nrow is LastRow,
-                                                                Ncol is LastCol+2,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty');
-                                                                (Nrow is LastRow+2,
-                                                                Ncol is LastCol,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty'))),
-
-                                                                if_then_else((LastCol==3,LastRow==5),
-                                                                (Nrow is LastRow,
-                                                                Ncol is LastCol+2),
-                                                                ((Nrow is LastRow-2,
-                                                                Ncol is LastCol+2,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty');
-                                                                (Nrow is LastRow,
-                                                                Ncol is LastCol+2,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty');
-                                                                (Nrow is LastRow+2,
-                                                                Ncol is LastCol,
-                                                                getPiece(Board,Nrow,Ncol,Piece),
-                                                                Piece\='empty'))).
-
-
-    validateMove('areaY1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol==7,LastRow==5);(LastCol==8,LastRow==5);(LastCol==6,LastRow==5)),
-                                                                  (Ncol is LastCol-2,
-                                                                  Nrow is LastRow),
-                                                                  ((Ncol is LastCol-2,
-                                                                  Nrow is LastRow+2,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty');
-                                                                  (Ncol is LastCol,
-                                                                  Nrow is LastRow+2,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty');
-                                                                  (Ncol is LastCol-2,
-                                                                  Nrow is LastRow,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty'))).
-
-
-    validateMove('areaY2',LastCol,LastRow,Ncol,Nrow,Board) :-  if_then_else(((LastCol==5,LastRow==8);(LastCol==5,LastRow==7);(LastCol==5,LastRow==6)),
-                                                                  (Ncol is LastCol,
-                                                                  Nrow is LastRow-2),
-                                                                  ((Ncol is LastCol-2,
-                                                                  Nrow is LastRow-2,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty');
-                                                                  (Ncol is LastCol-2,
-                                                                  Nrow is LastRow,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty');
-                                                                  (Ncol is LastCol,
-                                                                  Nrow is LastRow-2,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty'))).
+checkIfIsNotRedo(LastColPiece,LastRowPiece,ColPiece,RowPiece):-LastColPiece\=ColPiece,
+                                                                 LastRowPiece\=RowPiece.
 
 checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                                                           validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
                                                           getPiece(Board, Nrow, Ncol, NewPiece),
                                                           if_then_else((NewPiece=='noPiece'),
-                                                                    (printBoardAfterJump(Nrow,Ncol,LastRow,LastCol,Board,BoardOut2,Piece),(chooseNewJump(BoardOut2,BoardOut3,Nrow, Ncol,Row,Col,Piece,Area),getPiece(Board,Row,Col,Piece2),
+                                                                    (printBoardAfterJump(Nrow,Ncol,LastRow,LastCol,Board,BoardOut2,Piece),(chooseNewJump(BoardOut2,BoardOut3,LastCol,LastRow,Nrow, Ncol,Row,Col,Piece,Area),getPiece(Board,Row,Col,Piece2),
                                                                     if_then_else(areaX1(Row,Col),Area2='areaX1',
                                                                           (if_then_else(areaX2(Row,Col),Area2='areaX2',
                                                                           (if_then_else(areaY1(Row,Col),Area2='areaY1',
                                                                           (if_then_else(areaY2(Row,Col),Area2='areaY2',Area2=Area))))))), write(Area2),nl,
-                                                                if_then_else(Piece2=='noPiece',(checkIfIsNotNoPiece(BoardOut3,BoardOut4,Row,Col,FinalRow,FinalCol,SecondPiece,Area2),
+                                                                if_then_else(Piece2=='noPiece',(checkIfIsNotNoPiece(BoardOut3,BoardOut4,Ncol,Nrow,Row,Col,FinalRow,FinalCol,SecondPiece,Area2),
                                                                 if_then_else(areaX1(FinalRow,FinalCol),Area3='areaX1',
                                                                       (if_then_else(areaX2(FinalRow,FinalCol),Area3='areaX2',
                                                                       (if_then_else(areaY1(FinalRow,FinalCol),Area3='areaY1',
@@ -266,7 +185,7 @@ checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                 setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
         printFinalBoard(BoardOut).
 
-chooseNewJump(Board,BoardOut,LastRow,LastCol,Row,Col,Piece,Area) :-mode_game(Curr_mode),
+chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,Piece,Area) :-mode_game(Curr_mode),
                                                               user_is(Curr_user),
                                                               listOfValidDestinyMove(List,LastRow,LastCol,Area,Board),length(List,LengthOfList),
                                                               write(LengthOfList),nl,write(List),
@@ -280,7 +199,9 @@ chooseNewJump(Board,BoardOut,LastRow,LastCol,Row,Col,Piece,Area) :-mode_game(Cur
                                                     once(letterToNumber(ColLetter, Col)),
                                                     write('Please enter a position (1...9)'),
                                                     nl,
-                                                    getCode(Row)),
+                                                    getCode(Row),
+                                                    if_then_else(checkIfIsNotRedo(LastColPiece,LastRowPiece,Col,Piece),true,
+                                                    chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,Piece,Area))),
                                                     (listOfValidDestinyMove(Board,List, Piece, LastRow,LastCol),length(List,LengthOfList),
                                                                       random(0,LengthOfList,Index),
                                                                       nth0(Index,List,Row-Col))),
