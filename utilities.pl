@@ -29,3 +29,6 @@ set_user_is(NewPlayer):-
   nonvar(NewPlayer),
   retract(user_is(_)),
   asserta(user_is(NewPlayer)).
+
+duplicate(_Old,_New):-fail.
+duplicate(_Old,_Old).

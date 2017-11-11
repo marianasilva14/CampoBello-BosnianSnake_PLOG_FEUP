@@ -140,7 +140,7 @@ validateMove('areaX1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCol=
                                                                                                                               (Nrow is LastRow+2,
                                                                                                                               Ncol is LastCol,
                                                                                                                               getPiece(Board,Nrow,Ncol,Piece),
-                                                                                                                              Piece\='empty')))).
+                                                                                                                              Piece\='empty'))).
 
 
 
