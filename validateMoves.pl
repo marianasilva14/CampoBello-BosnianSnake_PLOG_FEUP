@@ -15,19 +15,7 @@ validateMovePC('areaX1',LastCol,LastRow,FinalCol,FinalRow,Board) :- if_then_else
                                                               Piece\='empty'))),
                                                               if_then_else((LastCol==4,LastRow==3),
                                                                   (Nrow is LastRow+2,
-                                                                  Ncol is LastCol+2),
-                                                                  ((Ncol is LastCol+2,
-                                                                  Nrow is LastRow+2,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty');
-                                                                  (Nrow is LastRow,
-                                                                  Ncol is LastCol+2,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty');
-                                                                  (Nrow is LastRow+2,
-                                                                  Ncol is LastCol,
-                                                                  getPiece(Board,Nrow,Ncol,Piece),
-                                                                  Piece\='empty'))),
+                                                                  Ncol is LastCol+2),true),
                                                               if_then_else((LastCol==Ncol,LastRow==Nrow),true,
                                                               (FinalCol is Ncol,FinalRow is Nrow)).
 
@@ -51,19 +39,12 @@ validateMovePC('areaX2',LastCol,LastRow,FinalCol,FinalRow,Board) :- if_then_else
 
                                                               if_then_else((LastCol==3,LastRow==5),
                                                               (Nrow is LastRow,
-                                                              Ncol is LastCol+2),
-                                                              ((Nrow is LastRow-2,
-                                                              Ncol is LastCol+2,
-                                                              getPiece(Board,Nrow,Ncol,Piece),
-                                                              Piece\='empty');
-                                                              (Nrow is LastRow,
-                                                              Ncol is LastCol+2,
-                                                              getPiece(Board,Nrow,Ncol,Piece),
-                                                              Piece\='empty');
-                                                              (Nrow is LastRow+2,
-                                                              Ncol is LastCol,
-                                                              getPiece(Board,Nrow,Ncol,Piece),
-                                                              Piece\='empty'))),
+                                                              Ncol is LastCol+2),true),
+
+                                                              if_then_else((LastCol==3,LastRow==6),
+                                                              (Nrow is LastRow-2,
+                                                              Ncol is LastCol+2),true),
+
                                                               if_then_else((LastCol==Ncol,LastRow==Nrow),true,
                                                               (FinalCol is Ncol,FinalRow is Nrow)).
 
@@ -102,6 +83,11 @@ validateMovePC('areaX2',LastCol,LastRow,FinalCol,FinalRow,Board) :- if_then_else
                                                                 Nrow is LastRow-2,
                                                                 getPiece(Board,Nrow,Ncol,Piece),
                                                                 Piece\='empty'))),
+
+                                                                if_then_else((LastCol==6,LastRow==5),
+                                                                      (Ncol is LastCol-2,
+                                                                      Nrow is LastRow),true),
+                                                                      
                                                                 if_then_else((LastCol==Ncol,LastRow==Nrow),true,
                                                                 (FinalCol is Ncol,FinalRow is Nrow)).
 
