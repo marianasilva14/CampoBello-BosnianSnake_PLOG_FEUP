@@ -128,8 +128,8 @@ printBoardAfterJump(Row,Col,LastRow,LastCol,Board,BoardOut,Piece) :- setPiece(Bo
                                                                     setPiece(BoardOut2,Row,Col,Piece,BoardOut),
                                                                     printFinalBoard(BoardOut),nl.
 
-checkIfIsNotRedo(LastColPiece,LastRowPiece,ColPiece,RowPiece):-LastColPiece\=ColPiece,
-                                                                 LastRowPiece\=RowPiece.
+checkIfIsNotRedo(LastColPiece,LastRowPiece,ColPiece,RowPiece):-LastColPiece==ColPiece,
+                                                                LastRowPiece==RowPiece.
 
 checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                                                           validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
@@ -141,7 +141,7 @@ checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                                                                           (if_then_else(areaX2(Row,Col),Area2='areaX2',
                                                                           (if_then_else(areaY1(Row,Col),Area2='areaY1',
                                                                           (if_then_else(areaY2(Row,Col),Area2='areaY2',Area2=Area))))))), write(Area2),nl,
-                                                                if_then_else(Piece2=='noPiece',(checkIfIsNotNoPiece(BoardOut3,BoardOut4,Ncol,Nrow,Row,Col,FinalRow,FinalCol,SecondPiece,Area2,NewContinue),
+                                                                if_then_else(Piece2=='noPiece',(trace,checkIfIsNotNoPiece(BoardOut3,BoardOut4,Ncol,Nrow,Row,Col,FinalRow,FinalCol,SecondPiece,Area2,NewContinue),
                                                                 if_then_else(NewContinue\=1,
                                                                 (if_then_else(areaX1(FinalRow,FinalCol),Area3='areaX1',
                                                                       (if_then_else(areaX2(FinalRow,FinalCol),Area3='areaX2',
@@ -203,20 +203,27 @@ chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,P
                                                     write('Please enter a position (1...9)'),
                                                     nl,
                                                     getCode(Row),
-                                                    if_then_else(checkIfIsNotRedo(LastColPiece,LastRowPiece,Col,Row),true,
-                                                    if_then_else(LengthOfList==1,(Continue is 1,setPiece(Board,Row,Col,Piece,BoardOut2),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut)),(Continue is 0,
+                                                    if_then_else(checkIfIsNotRedo(LastColPiece,LastRowPiece,Col,Row),
+                                                    if_then_else(LengthOfList==1,(Continue is 1,setPiece(Board,Row,Col,Piece,BoardOut2),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut)),
+                                                    (Continue is 0,
                                                     chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,Piece,Area,Continue),
                                                     validateMove(Area, LastCol, LastRow, Col, Row,Board),
                                                     setPiece(Board,Row,Col,Piece,BoardOut2),
                                                     setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
-                                                    printFinalBoard(BoardOut))))),
+                                                    printFinalBoard(BoardOut))),
+                                                    (Continue is 0,
+                                                    validateMove(Area, LastCol, LastRow, Col, Row,Board),
+                                                    setPiece(Board,Row,Col,Piece,BoardOut2),
+                                                    setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
+                                                    printFinalBoard(BoardOut)))),
                                                     (listOfValidDestinyMove(Board,List, Piece, LastRow,LastCol),length(List,LengthOfList),
                                                                       random(0,LengthOfList,Index),
                                                                       nth0(Index,List,Row-Col),
                                                                       setPiece(Board,Row,Col,Piece,BoardOut2),
                                                                       setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
                                                                       printFinalBoard(BoardOut))),
-                                                    printFinalBoard(Board)).
+                                                    (duplicate(Board,BoardOut),
+                                                    printFinalBoard(BoardOut))).
 
 
 
