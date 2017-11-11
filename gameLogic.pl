@@ -121,8 +121,9 @@ validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece,Area,BoardOut) :- if
 
 checkIfIsNotNoPiece(Board,BoardOut,LastColPiece,LastRowPiece,Row,Col,FinalRow,FinalCol,Piece,Area,NewContinue):-repeat,
                                                         chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,Row, Col,FinalRow,FinalCol,Piece,Area,NewContinue),
-                                                        getPiece(BoardOut, FinalRow, FinalCol, SecondPiece),
-                                                        SecondPiece \= 'noPiece'.
+                                                        if_then_else(NewContinue\=1,
+                                                        (getPiece(BoardOut, FinalRow, FinalCol, SecondPiece),
+                                                        SecondPiece \= 'noPiece'),true).
 
 printBoardAfterJump(Row,Col,LastRow,LastCol,Board,BoardOut,Piece) :- setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
                                                                     setPiece(BoardOut2,Row,Col,Piece,BoardOut),
@@ -141,7 +142,7 @@ checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                                                                           (if_then_else(areaX2(Row,Col),Area2='areaX2',
                                                                           (if_then_else(areaY1(Row,Col),Area2='areaY1',
                                                                           (if_then_else(areaY2(Row,Col),Area2='areaY2',Area2=Area))))))), write(Area2),nl,
-                                                                if_then_else(Piece2=='noPiece',(trace,checkIfIsNotNoPiece(BoardOut3,BoardOut4,Ncol,Nrow,Row,Col,FinalRow,FinalCol,SecondPiece,Area2,NewContinue),
+                                                                if_then_else(Piece2=='noPiece',(checkIfIsNotNoPiece(BoardOut3,BoardOut4,Ncol,Nrow,Row,Col,FinalRow,FinalCol,SecondPiece,Area2,NewContinue),
                                                                 if_then_else(NewContinue\=1,
                                                                 (if_then_else(areaX1(FinalRow,FinalCol),Area3='areaX1',
                                                                       (if_then_else(areaX2(FinalRow,FinalCol),Area3='areaX2',
@@ -204,7 +205,8 @@ chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,P
                                                     nl,
                                                     getCode(Row),
                                                     if_then_else(checkIfIsNotRedo(LastColPiece,LastRowPiece,Col,Row),
-                                                    if_then_else(LengthOfList==1,(Continue is 1,setPiece(Board,Row,Col,Piece,BoardOut2),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut)),
+                                                    if_then_else(LengthOfList==1,(Continue is 1,setPiece(Board,LastRowPiece,LastColPiece,Piece,BoardOut2),
+                                                    getPiece(Board,Row,Col,PieceChoosen),setPiece(BoardOut2,Row,Col,PieceChoosen,BoardOut)),
                                                     (Continue is 0,
                                                     chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,Piece,Area,Continue),
                                                     validateMove(Area, LastCol, LastRow, Col, Row,Board),
