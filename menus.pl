@@ -77,7 +77,7 @@ readInput(1) :- initialBoard(Board),printFinalBoard(Board),
                 play(Board),
                 mainMenu.
 
-readInput(2) :- middleBoard(Board), printFinalBoard(Board),
+readInput(2) :- initialBoard(Board), printFinalBoard(Board),
                 set_user_is('pcX'),
                 play(Board),
                 mainMenu.
