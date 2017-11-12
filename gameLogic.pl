@@ -33,7 +33,7 @@
                                                             getCode(RowSource),
                                                             validateSourcePiece(ColSource, RowSource,Board,Piece),
                                                             getPiece(Board,RowSource,ColSource,Piece)),
-                                                            (if_then_else(Curr_level==1),
+                                                            (if_then_else(Curr_level==1,
                                                             (if_then_else(Curr_user=='pcX',
                                                             listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                                                             listOfPiecesThatHasPossibleMoveY(FinalList,Board)),
@@ -45,7 +45,8 @@
                                                             (if_then_else(Curr_user=='pcX',
                                                             listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                                                             listOfPiecesThatHasPossibleMoveY(FinalList,Board)),
-                                                            listOfBestMovements(FinalList,ListOfBestMoves,Board,RowSource,ColSource))),
+                                                            listOfBestMovements(ListOfBestMoves,Board),
+                                                            nth0(0,ListOfBestMoves,Points-RowSource-ColSource))))),
 
                                                             nl,write('Row: '),write(RowSource),write(' ,Col: '),
                                                             numberToLetter(ColSource,Letter),write(Letter),nl.
@@ -78,7 +79,8 @@
                                                                       (random(0,LengthOfList,Index),
                                                                       nth0(Index,List,RowDestiny-ColDestiny),
                                                                       validateDestinyPiece(ColSource,RowSource,ColDestiny,RowDestiny,Board,Piece, Area,BoardOut)),
-                                                                      listOfBestMovements(List,ListOfBestMoves,Board,RowDestiny,ColDestiny)))),
+                                                                      (listOfBestMovements(ListOfBestMoves,Board),
+                                                                      nth0(0,ListOfBestMoves,Points-RowDestiny-ColDestiny)))))),
                                                                       if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX'))),nl,
                                                                       write('List Of Possible Moves: '),
                                                                       write(List), write(' Row: '),write(RowDestiny), write(' Col: '),
@@ -435,7 +437,7 @@ endGame(Board) :- listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                   if_then_else(LengthOfFinalList==0,true,fail);
                   if_then_else(LengthOfFinalList2==0,true,fail)).
 
-
+%Calculate points of each player
   calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
                            append(List,List2,FinalListX),
@@ -452,6 +454,6 @@ endGame(Board) :- listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                            write('Points of playerX:'), write(PointsX),nl,
                            write('Points of playerY:'), write(PointsY),nl.
 
-
+%Check the winner of the game
   checkWinner(Board) :- calculatePoints(Board,PointsX,PointsY),
                   if_then_else(PointsX@>PointsY,write('The winner is PlayerY'),write('The winner is PlayerX')).
