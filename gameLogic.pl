@@ -6,8 +6,13 @@
                  user_is(Curr_user),
                  chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece,Area, BoardOut),nl,nl,
-                 if_then_else((Curr_mode==2,Curr_user=='pcX'),set_user_is('player'),(set_user_is('pcX'),
-                 if_then_else((Curr_mode==3,Curr_user=='pcX'),set_user_is('pcY'),set_user_is('pcX')))),
+                 write('1111:'),write(Curr_mode),write(Curr_user),
+                 if_then_else(Curr_mode==2,
+                  if_then_else(Curr_user=='pcX',set_user_is('player'),set_user_is('pcX')),
+                 if_then_else(Curr_mode==3,
+                 if_then_else(Curr_user=='pcX',set_user_is('pcY'),set_user_is('pcX')),true)),
+                  user_is(NewCurr_user),
+                 write('22222'),write(Curr_mode),write(NewCurr_user),
                  if_then_else(endGame(BoardOut),(nl,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut)),play(BoardOut)),
                  sleep(1).
 
@@ -26,7 +31,6 @@
                                                             write('Please enter a position (1...9)'),
                                                             nl,
                                                             getCode(RowSource),
-
                                                             validateSourcePiece(ColSource, RowSource,Board,Piece)),
                                                             (if_then_else((Curr_user=='pcX'),
                                                             listOfPiecesThatHasPossibleMoveX(FinalList,Board),
@@ -58,11 +62,11 @@
                                                                       write('Please enter a position (1...9)'),
                                                                       nl,
                                                                       getCode(RowDestiny),
-                                                                          write(ColDestiny),
+                                                                      write(ColDestiny),
                                                                       validateDestinyPiece(ColSource,RowSource,ColDestiny, RowDestiny,Board,Piece,Area, BoardOut),
                                                                       player(Curr_player),
                                                                       if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX'))),
-                                                                      (listOfValidDestinyMove(List, RowSource,ColSource,Area,Board),write(List),length(List,LengthOfList),
+                                                                      (write(List),
                                                                                         random(0,LengthOfList,Index),
                                                                                         nth0(Index,List,RowDestiny-ColDestiny),
                                                                                         validateDestinyPiece(ColSource,RowSource,ColDestiny,RowDestiny,Board,Piece, Area,BoardOut)))),
@@ -141,6 +145,7 @@
                                     scrollList(Rest, FinalList,Board)).
 
   listOfValidDestinyMove(List,LastRow,LastCol,Area,Board) :-
+          nl,write('ESTE PRINT!'),write(LastRow),write(LastCol),
           if_then_else(setof(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List),true,
                 findall(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List)).
 
@@ -440,14 +445,14 @@ checkPieces('pieceY1',Board) :- getElement(Board,_,_,'pieceY1').
 checkPieces('pieceY2',Board) :- getElement(Board,_,_,'pieceY2').
 
 
-endGame(Board) :- if_then_else((checkPieces('pieceX1',Board),checkPieces('pieceX2',Board)),fail,true),
-                  listOfPiecesThatHasPossibleMoveX(FinalList,Board),
+endGame(Board) :- listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                   length(FinalList,LengthOfFinalList),
-                  if_then_else(LengthOfFinalList==0,fail,true),
-                  if_then_else((checkPieces('pieceY1',Board),checkPieces('pieceY2',Board)),fail,true),
-                  listOfPiecesThatHasPossibleMoveY(FinalList,Board),
-                  length(FinalList,LengthOfFinalList),
-                  if_then_else(LengthOfFinalList==0,fail,true).
+                  listOfPiecesThatHasPossibleMoveY(FinalList2,Board),
+                  length(FinalList2,LengthOfFinalList2),
+                  if_then_else(((checkPieces('pieceX1',Board),checkPieces('pieceX2',Board));
+                  (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board));(LengthOfFinalList==0;LengthOfFinalList2==0)),
+                  true,
+                  fail).
 
   calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
