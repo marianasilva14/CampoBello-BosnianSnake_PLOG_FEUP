@@ -237,7 +237,7 @@ checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
 chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,Piece,Area,Continue) :-mode_game(Curr_mode),
                                                               user_is(Curr_user),
                                                               listOfValidDestinyMove(List,LastRow,LastCol,Area,Board),length(List,LengthOfList),
-                                                              write(LengthOfList),nl,write(List),
+                                                              write(LengthOfList),nl,
                                                               if_then_else(LengthOfList\=0,
                                                               if_then_else((Curr_mode == 1; Curr_user=='player'),
                                                     (repeat,write('You need jump one more time!'),
@@ -263,7 +263,7 @@ chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,P
                                                     setPiece(Board,Row,Col,Piece,BoardOut2),
                                                     setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
                                                     printFinalBoard(BoardOut)))),
-                                                    (nl,write('Row: '),write(LastRow),write('  Col: '),write(LastCol),
+                                                    (nl,write('Row: '),write(LastRow),write('  Col: '),write(LastCol),nl,write(Area),
                                                     nl,write('Lista: '),write(List),
                                                                       random(0,LengthOfList,Index),
                                                                       nth0(Index,List,Row-Col),
@@ -394,12 +394,14 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                             (getPiece(Board,NewRow,Ncol,Piece),
                             Piece \='empty').
 
-  endGame(Board) :- player(Curr_player),
-                    if_then_else(Curr_player==playerX, (checkPieces('pieceX1',Board),checkPieces('pieceX2',Board),
-                                                      checkMoves('pieceX1',Board),checkMoves('pieceX2',Board)),
-                                                                (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board),
-
-                                                                 checkMoves('pieceY1',Board),checkMoves('pieceY2',Board))).
+  endGame(Board) :- mode_game(Curr_mode),
+                    user_is(Curr_user),
+                    player(Curr_player),
+                    if_then_else(((Curr_mode == 1,Curr_player=='playerX');(Curr_mode == 2, Curr_user=='pcX');(Curr_mode == 3, Curr_user=='pcX')),
+                    (checkPieces('pieceX1',Board),checkPieces('pieceX2',Board),
+                    checkMoves('pieceX1',Board),checkMoves('pieceX2',Board)),
+                        (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board),
+                        checkMoves('pieceY1',Board),checkMoves('pieceY2',Board))).
 
   areaPiece(Nrow,Ncol,Area):-if_then_else(areaX1(Nrow,Ncol),Area=='areaX1',
                                 (if_then_else(areaX2(Nrow,Ncol),Area=='areaX2',
