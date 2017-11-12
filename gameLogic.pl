@@ -15,7 +15,7 @@
                  if_then_else(endGame(BoardOut),(nl,write('End Game'),checkWinner(BoardOut)),play(BoardOut)),
                  sleep(1).
 
-%Predicate responsible for choosing the coordinates of origin
+%Predicate responsible for choosing the origin coordinates
   chooseSourceCoords(RowSource, ColSource,Board,Piece,AskForDestinyPiece) :-   mode_game(Curr_mode),
                                                             user_is(Curr_user),
                                                             level(Curr_level),
@@ -52,7 +52,8 @@
 
                                                             nl,write('Row: '),write(RowSource),write(' ,Col: '),
                                                             numberToLetter(ColSource,Letter),write(Letter),nl.
-%Predicate responsável por escolher as coordenadas de destino
+
+%Predicate responsible for choosing the destiny coordinates
   chooseDestinyCoords(RowSource, ColSource, Board,Piece,BoardOut) :- mode_game(Curr_mode),
                                                                       user_is(Curr_user),
                                                                       level(Curr_level),
@@ -87,40 +88,21 @@
                                                                       write('List Of Possible Moves: '),
                                                                       write(List), write(' Row: '),write(RowDestiny), write(' Col: '),
                                                                       numberToLetter(ColDestiny,Letter),write(Letter),nl.
-
-
-  letterToNumber('A',1).
-  letterToNumber('B',2).
-  letterToNumber('C',3).
-  letterToNumber('D',4).
-  letterToNumber('E',5).
-  letterToNumber('F',6).
-  letterToNumber('G',7).
-  letterToNumber('H',8).
-  letterToNumber('I',9).
-
-  numberToLetter(1,'A').
-  numberToLetter(2,'B').
-  numberToLetter(3,'C').
-  numberToLetter(4,'D').
-  numberToLetter(5,'E').
-  numberToLetter(6,'F').
-  numberToLetter(7,'G').
-  numberToLetter(8,'H').
-  numberToLetter(9,'I').
-
+%Predicate that returns a list with parts that have possible moves
   listOfPiecesThatHasPossibleMoveX(FinalList,Board):-
                                 saveElements(Board,'pieceX1',List1),
                                 saveElements(Board,'pieceX2',List2),
                                 append(List1,List2,ListOfDestiny),
                                 scrollList(ListOfDestiny,FinalList,Board).
 
+%Predicate that returns a list with parts that have possible moves
   listOfPiecesThatHasPossibleMoveY(FinalList,Board):-
                                 saveElements(Board,'pieceY1',List1),
                                 saveElements(Board,'pieceY2',List2),
                                 append(List1,List2,ListOfDestiny),
                                 scrollList(ListOfDestiny,FinalList,Board).
 
+%Predicate that walks through a list filling them with positions that have possible moves.
 scrollList([],[],_).
 scrollList([Nrow-Ncol|Rest], FinalList,Board):-
   if_then_else(areaX1(Nrow,Ncol),Area='areaX1',
@@ -135,11 +117,12 @@ if_then_else(
                                     % ELSE
     scrollList(Rest, FinalList,Board)).
 
-
+%Predicate that returns a list with valid target moves
   listOfValidDestinyMove(List,LastRow,LastCol,Area,Board) :-
           if_then_else(setof(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List),true,
                 findall(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List)).
 
+%Predicate that checks which pieces the player can choose to move
   validateSourcePiece(Ncol, Nrow,Board,Piece) :- getPiece(Board, Nrow, Ncol, Piece),
                                                   user_is(Curr_user),
                                                   player(Curr_player),
@@ -157,23 +140,28 @@ if_then_else(
                                                  Piece \= 'empty',
                                                  Piece \= 'noPiece'.
 
+%Predicate that verifies the valid movements
 validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece,Area,BoardOut) :- if_then_else((Piece=='pieceX1';Piece=='pieceX2'),
                                                                             checkIfCanMoveX(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut,Area),
                                                                             checkIfCanMoveY(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut,Area)).
 
+%Predicate that the piece to which it jumped is a noPiece and in case it is asked to jump again.
 checkIfIsNotNoPiece(Board,BoardOut,LastColPiece,LastRowPiece,Row,Col,FinalRow,FinalCol,Piece,Area,NewContinue):-repeat,
                                                         chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,Row, Col,FinalRow,FinalCol,Piece,Area,NewContinue),
                                                         if_then_else(NewContinue\=1,
                                                         (getPiece(BoardOut, FinalRow, FinalCol, SecondPiece),
                                                         SecondPiece \= 'noPiece'),true).
 
+%Predicate that calls the function responsible for printing the board after a new jump.
 printBoardAfterJump(Row,Col,LastRow,LastCol,Board,BoardOut,Piece) :- setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
                                                                     setPiece(BoardOut2,Row,Col,Piece,BoardOut),
                                                                     printFinalBoard(BoardOut),nl.
 
+%Predicate that checks if it did not jump to the same piece in the same movement.
 checkIfIsNotRedo(LastColPiece,LastRowPiece,ColPiece,RowPiece):-LastColPiece==ColPiece,
                                                                 LastRowPiece==RowPiece.
 
+%Predicate responsible for executing all rules of the game for player X, namely when the user can make single, double or triple jumps, validating them.
 checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                                                           validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
                                                           getPiece(Board, Nrow, Ncol, NewPiece),
@@ -203,6 +191,7 @@ checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                                                                         setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
                                                                 printFinalBoard(BoardOut).
 
+%Predicate responsible for executing all rules of the game for player Y, namely when the user can make single, double or triple jumps, validating them.
 checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
   validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
   getPiece(Board, Nrow, Ncol, NewPiece),
@@ -232,7 +221,7 @@ checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                 setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
         printFinalBoard(BoardOut).
 
-
+%Predicate responsible for requesting a new leap to the player when a "noPiece" part is found
 chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,Piece,Area,Continue) :-
                                                   if_then_else(areaX1(LastRow,LastCol),AreaDestiny='areaX1',
                                                         (if_then_else(areaX2(LastRow,LastCol),AreaDestiny='areaX2',
@@ -292,7 +281,7 @@ chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,P
 
 
 
-
+%Predicate responsible for asking the user which part of the board he wants to remove
 choosePieceToRemove(Board, BoardOut) :-mode_game(Curr_mode),
                                               user_is(Curr_user),
                                               player(Curr_player),
@@ -321,64 +310,76 @@ choosePieceToRemove(Board, BoardOut) :-mode_game(Curr_mode),
                                                             nth0(Index,List,Row-Col))),
                                           setPiece(Board,Row,Col,'noPiece',BoardOut).
 
-
+%Predicate that returns a list of the parts that the X computer can remove
 listOfPiecesThatCanRemoveX(Board,List):-if_then_else(setof(Nrow-Ncol,checkIfCanRemoveX(Board,Ncol,Nrow),List),true,
                                                       findall(Nrow-Ncol,checkIfCanRemoveX(Board,Ncol,Nrow),List)).
 
+%Predicate that returns a list of the parts that the X computer can remove
 listOfPiecesThatCanRemoveY(Board,List):-if_then_else(setof(Nrow-Ncol,checkIfCanRemoveY(Board,Ncol,Nrow),List),true,
                                                       findall(Nrow-Ncol,checkIfCanRemoveY(Board,Ncol,Nrow),List)).
 
+%Predicate that tests whether the piece chosen by player X to remove is one of his own pieces.
 checkIfCanRemoveX(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                 NewPiece \= 'empty',
                                                 NewPiece \= 'pieceY1',
                                                 NewPiece \= 'pieceY2',
                                                 NewPiece \= 'noPiece'.
 
+%Predicate that tests whether the piece chosen by player X to remove is one of his own pieces.
 checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                 NewPiece \= 'empty',
                                                 NewPiece \= 'pieceX1',
                                                 NewPiece \= 'pieceX2',
                                                 NewPiece \= 'noPiece'.
 
-
+%Predicate that returns the part in a given row and column.
   getPiece(Board, Nrow, Ncol, Piece) :-  getElement(Board,Nrow,Ncol,Piece).
 
+%Predicate that changes a certain piece in the board and updates the new board.
   setPiece(BoardIn, Nrow, Ncol, Piece, BoardOut) :- setOnRow(Nrow, BoardIn, Ncol, Piece, BoardOut).
 
+%Predicate that changes the part on the board in a certain line
   setOnRow(1, [Row|Remainder], Ncol, Piece, [Newrow|Remainder]):- setOnCol(Ncol, Row, Piece, Newrow).
   setOnRow(Pos, [Row|Remainder], Ncol, Piece, [Row|Newremainder]):- Pos @> 1,
                                                                     Next is Pos-1,
                                                                     setOnRow(Next, Remainder, Ncol, Piece, Newremainder).
-
+%Predicate that changes the part on the board in a given column
   setOnCol(1, [_|Remainder], Piece, [Piece|Remainder]).
   setOnCol(Pos, [X|Remainder], Piece, [X|Newremainder]):- Pos @> 1,
                                                           Next is Pos-1,
                                                           setOnCol(Next, Remainder, Piece, Newremainder).
-
+%Predicate that does an if than else
   if_then_else(If, Then,_):- If,!, Then.
   if_then_else(_, _, Else):- Else.
 
+%Predicate that returns the element that is contained in the tray in a given column and row.
   getElement(Board,Nrow,Ncol,Element) :- nth1(Nrow, Board, Row),
                                          nth1(Ncol,Row,Element).
 
-%
+%Predicate that checks if is in area X1
   areaX1(Nrow,Ncol):- (Ncol@>1,
                       Ncol@<6,
                       Nrow@>0,
                       Nrow@<5).
+%Predicate that checks if is in area X2
   areaX2(Nrow,Ncol):- (Ncol@>0,
                       Ncol@<5,
                       Nrow@>4,
                       Nrow@<9).
+
+%Predicate that checks if is in area Y1
   areaY1(Nrow,Ncol):- (Ncol@>5,
                       Ncol@<10,
                       Nrow@>1,
                       Nrow@<6).
+
+%Predicate that checks if is in area Y2
   areaY2(Nrow,Ncol):-(Ncol@>4,
                       Ncol@<9,
                       Nrow@>5,
                       Nrow@<10).
-%Area of playerX
+
+%Predicate that checks if is the area of playerX
   areaX(Nrow,Ncol):- (Ncol@>1,
                       Ncol@<6,
                       Nrow@>0,
@@ -387,7 +388,8 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                       Ncol@<5,
                       Nrow@>4,
                       Nrow@<9).
-%Area of playerY
+
+%Predicate that checks if is the area of playerY
   areaY(Nrow,Ncol):- (Ncol@>5,
                       Ncol@<10,
                       Nrow@>1,
@@ -397,7 +399,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                       Nrow@>5,
                       Nrow@<10).
 
-%List with the pieces of the player
+%Predicate thata does a list with the pieces of the player
   saveElements(Board,'pieceX1',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List),
                                             true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List)).
   saveElements(Board,'pieceX2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List),
@@ -407,7 +409,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
   saveElements(Board,'pieceY2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List),
                                             true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List)).
 
- %check which area the piece is in and calculate the points
+ %Predicatethat checks which area the piece is in and calculate the points
   getNrowNcol([],PointsXIn,PointsXOut,'playerX').
   getNrowNcol([],PointsYIn,PointsYOut,'playerY').
   getNrowNcol([Nrow-Ncol|Rest],PointsXIn,PointsXOut,'playerX'):-
@@ -419,21 +421,21 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                                                   PointsYOut is PointsYIn+1),
                                                                       getNrowNcol(Rest,PointsYOut,PointsYOutNew,'playerY').
 
-%checks if the playerX has pieces on the board
+%Predicate that checks if the playerX has pieces on the board
 checkIfExistsPiecesX(Board) :- saveElements(Board,'pieceX1',List),
                        saveElements(Board,'pieceX2',List2),
                        append(List,List2,FinalList),
                        length(FinalList,LengthOfFinalList),
                        if_then_else(LengthOfFinalList==0,fail,true).
 
-%checks if the playerY has pieces on the board
+%Predicate that checks if the playerY has pieces on the board
 checkIfExistsPiecesY(Board) :-  saveElements(Board,'pieceY1',List),
                        saveElements(Board,'pieceY2',List2),
                        append(List,List2,FinalList),
                        length(FinalList,LengthOfFinalList),
                        if_then_else(LengthOfFinalList==0,fail,true).
 
-%check if the game is over
+%Predicate that checks if is the end of the game
 endGame(Board) :- listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                   length(FinalList,LengthOfFinalList),
                   listOfPiecesThatHasPossibleMoveY(FinalList2,Board),
@@ -443,7 +445,7 @@ endGame(Board) :- listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                   if_then_else(LengthOfFinalList==0,true,fail);
                   if_then_else(LengthOfFinalList2==0,true,fail)).
 
-%Calculate points of each player
+%Predicate that calculates the points of each player
   calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
                            append(List,List2,FinalListX),
@@ -460,6 +462,6 @@ endGame(Board) :- listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                            write('Points of playerX:'), write(PointsX),nl,
                            write('Points of playerY:'), write(PointsY),nl.
 
-%Check the winner of the game
+%Predicate that checks the winner of the game
   checkWinner(Board) :- calculatePoints(Board,PointsX,PointsY),
                   if_then_else(PointsX@>PointsY,write('The winner is PlayerY'),write('The winner is PlayerX')).

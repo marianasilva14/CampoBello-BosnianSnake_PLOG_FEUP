@@ -1,4 +1,4 @@
-
+%Predicate that calculates the player's points through the received board
 evaluateBoards(Board,Points):-user_is(Curr_user),
       if_then_else(Curr_user=='pcX',
       (saveElements(Board,'pieceX1',List),
@@ -11,6 +11,7 @@ evaluateBoards(Board,Points):-user_is(Curr_user),
       append(List,List2,FinalList),
       getNrowNcol(FinalList,0,Points,'playerY'))).
 
+%Predicate that makes a list with the best plays, increasingly ordered by the number of points of each player
 listOfBestMovements(FinalList,Board):-
           setof(Points-Nrow-Ncol,(
           if_then_else(areaX1(Nrow,Ncol),Area='areaX1',

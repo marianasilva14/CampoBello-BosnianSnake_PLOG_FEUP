@@ -1,3 +1,4 @@
+%Predicate that validates the plays of the pc in the area X1
 validateMovePC('areaX1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol==5,LastRow==3);(LastCol==5,LastRow==4);(LastCol==5,LastRow==2)),
                                                               (Nrow is LastRow+2,
                                                               Ncol is LastCol),
@@ -16,7 +17,7 @@ validateMovePC('areaX1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastC
                                                               if_then_else((LastCol==4,LastRow==3),
                                                                   (Nrow is LastRow+2,
                                                                   Ncol is LastCol+2),true).
-
+%Predicate that validates the plays of the pc in the area X2
 validateMovePC('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCol==2,LastRow==5),
                                                               (Nrow is LastRow+2,
                                                               Ncol is LastCol;
@@ -43,7 +44,7 @@ validateMovePC('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCo
                                                               (Nrow is LastRow-2,
                                                               Ncol is LastCol+2),true).
 
-
+%Predicate that validates the plays of the pc in the area Y1
   validateMovePC('areaY1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol==7,LastRow==5);(LastCol==8,LastRow==5);(LastCol==6,LastRow==5)),
                                                                 (Ncol is LastCol-2,
                                                                 Nrow is LastRow),
@@ -64,8 +65,8 @@ validateMovePC('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCo
                                                                 (Nrow is LastRow+2,
                                                                 Ncol is LastCol-2),true).
 
-
-  validateMovePC('areaY2',LastCol,LastRow,Ncol,Nrow,Board) :-  
+%Predicate that validates the plays of the pc in the area Y2
+  validateMovePC('areaY2',LastCol,LastRow,Ncol,Nrow,Board) :-
                                                               if_then_else(((LastCol==5,LastRow==8);(LastCol==5,LastRow==7);(LastCol==5,LastRow==6)),
                                                                 (Ncol is LastCol,
                                                                 Nrow is LastRow-2),
@@ -85,7 +86,7 @@ validateMovePC('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCo
                                                                 if_then_else((LastCol==6,LastRow==5),
                                                                       (Ncol is LastCol-2,
                                                                       Nrow is LastRow),true).
-
+%Predicate that validates the plays of the player in the area X1
 validateMove('areaX1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol==5,LastRow==3);(LastCol==5,LastRow==4);(LastCol==5,LastRow==2)),
                                                               (RowTemp is LastRow+2,
                                                               Nrow == RowTemp,
@@ -111,6 +112,8 @@ validateMove('areaX1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol
                                                                   ColTemp is LastCol+2,
                                                                   Nrow == RowTemp,
                                                                   Ncol == ColTemp),true).
+
+%Predicate that validates the plays of the player in the area X2
 validateMove('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCol==2,LastRow==5),
                                                             (RowTemp is LastRow+2,
                                                             Nrow == RowTemp,
@@ -146,7 +149,7 @@ validateMove('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCol=
                                                             Nrow == RowTemp,
                                                             Ncol == ColTemp),true).
 
-
+%Predicate that validates the plays of the player in the area Y1
 validateMove('areaY1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol==7,LastRow==5);(LastCol==8,LastRow==5);(LastCol==6,LastRow==5)),
                                                               (ColTemp is LastCol-2,
                                                               Ncol == ColTemp,
@@ -174,7 +177,7 @@ validateMove('areaY1',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else(((LastCol
                                                               ColTemp is LastCol-2,
                                                               Ncol == ColTemp),true).
 
-
+%Predicate that validates the plays of the player in the area Y2
 validateMove('areaY2',LastCol,LastRow,Ncol,Nrow,Board) :-  if_then_else(((LastCol==5,LastRow==8);(LastCol==5,LastRow==7);(LastCol==5,LastRow==6)),
                                                               (RowTemp is LastRow-2,
                                                               Ncol == LastCol,
