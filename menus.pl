@@ -22,10 +22,12 @@ printMainMenu:-
   write('        |                                 2.Start Game PC vs Player                                 |'),nl,
   write('        |                                                                                           |'),nl,
 	write('        |                                   3.Start Game PC vs PC                                   |'),nl,
-	write('        |                                                                                           |'),nl,
-  write('        |                                       4.How to Play                                       |'),nl,
   write('        |                                                                                           |'),nl,
-  write('        |                                           5.Exit                                          |'),nl,
+  write('        |                                      4.Set Difficulty                                     |'),nl,
+  write('        |                                                                                           |'),nl,
+  write('        |                                       5.How to Play                                       |'),nl,
+  write('        |                                                                                           |'),nl,
+  write('        |                                           6.Exit                                          |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl,
@@ -63,10 +65,22 @@ printMainMenu:-
     write('        |                                          0. Back                                          |'),nl,
     write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl.
 
-
+    printSetLevelMenu:-
+      nl,nl,nl,
+    write('         ___________________________________________________________________________________________'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                            Please choose the level of the Game:                           |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                                       1. Normal Difficulty                                |'),nl,
+    write('        |                                       2. Hard Difficulty                                  |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |                                                                                           |'),nl,
+    write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl.
 
 mainMenu :- printMainMenu,
             now(X), setrand(X),
+            set_level(1),
             read(Input),
             set_mode_game(Input),
             readInput(Input).
@@ -87,8 +101,20 @@ readInput(3) :- initialBoard(Board), printFinalBoard(Board),
                 play(Board),
                 mainMenu.
 
-readInput(4) :- printHowToPlayMenu,
+readInput(4) :- printSetLevelMenu,
+                read(Input),
+                readInput2(Input).
+
+readInput2(1) :- set_level(1),
+                mainMenu.
+
+readInput2(2) :- set_level(2),
+                mainMenu.
+
+
+
+readInput(5) :- printHowToPlayMenu,
                 read(Input),
                 readInput(Input).
 
-readInput(5) :- write('Exiting...').
+readInput(6) :- write('Exiting...').

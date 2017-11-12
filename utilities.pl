@@ -9,10 +9,12 @@ getCode(Input) :- get_code(_TempInput),
 :-dynamic player/1.
 :-dynamic mode_game/1.
 :-dynamic user_is/1.
+:-dynamic level/1.
 
 mode_game(1).
 player(playerX).
 user_is(player).
+level(level1).
 
 set_player(Player):-
   nonvar(Player),
@@ -32,3 +34,9 @@ set_user_is(NewPlayer):-
 
 duplicate(_Old,_New):-fail.
 duplicate(_Old,_Old).
+
+set_level(Level):-
+    nonvar(Level),
+    integer(Level),
+    retract(level(_)),
+    asserta(level(Level)).
