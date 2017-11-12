@@ -2,6 +2,7 @@
 :-use_module(library(random)).
 :-use_module(library(system)).
 
+%Predicate responsible for the main game cycle
   play(Board) :- mode_game(Curr_mode),
                  user_is(Curr_user),
                  chooseSourceCoords(RowSource, ColSource, Board, Piece,AskForDestinyPiece),
@@ -14,6 +15,7 @@
                  if_then_else(endGame(BoardOut),(nl,write('End Game'),checkWinner(BoardOut)),play(BoardOut)),
                  sleep(1).
 
+%Predicate responsible for choosing the coordinates of origin
   chooseSourceCoords(RowSource, ColSource,Board,Piece,AskForDestinyPiece) :-   mode_game(Curr_mode),
                                                             user_is(Curr_user),
                                                             level(Curr_level),
@@ -50,7 +52,7 @@
 
                                                             nl,write('Row: '),write(RowSource),write(' ,Col: '),
                                                             numberToLetter(ColSource,Letter),write(Letter),nl.
-
+%Predicate responsável por escolher as coordenadas de destino
   chooseDestinyCoords(RowSource, ColSource, Board,Piece,BoardOut) :- mode_game(Curr_mode),
                                                                       user_is(Curr_user),
                                                                       level(Curr_level),
@@ -359,6 +361,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
   getElement(Board,Nrow,Ncol,Element) :- nth1(Nrow, Board, Row),
                                          nth1(Ncol,Row,Element).
 
+%
   areaX1(Nrow,Ncol):- (Ncol@>1,
                       Ncol@<6,
                       Nrow@>0,
@@ -375,7 +378,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                       Ncol@<9,
                       Nrow@>5,
                       Nrow@<10).
-
+%Area of playerX
   areaX(Nrow,Ncol):- (Ncol@>1,
                       Ncol@<6,
                       Nrow@>0,
@@ -384,7 +387,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                       Ncol@<5,
                       Nrow@>4,
                       Nrow@<9).
-
+%Area of playerY
   areaY(Nrow,Ncol):- (Ncol@>5,
                       Ncol@<10,
                       Nrow@>1,
@@ -394,7 +397,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                       Nrow@>5,
                       Nrow@<10).
 
-
+%List with the pieces of the player
   saveElements(Board,'pieceX1',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List),
                                             true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List)).
   saveElements(Board,'pieceX2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List),
@@ -404,6 +407,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
   saveElements(Board,'pieceY2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List),
                                             true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List)).
 
+ %check which area the piece is in and calculate the points
   getNrowNcol([],PointsXIn,PointsXOut,'playerX').
   getNrowNcol([],PointsYIn,PointsYOut,'playerY').
   getNrowNcol([Nrow-Ncol|Rest],PointsXIn,PointsXOut,'playerX'):-
@@ -415,19 +419,21 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                                                   PointsYOut is PointsYIn+1),
                                                                       getNrowNcol(Rest,PointsYOut,PointsYOutNew,'playerY').
 
-
+%checks if the playerX has pieces on the board
 checkIfExistsPiecesX(Board) :- saveElements(Board,'pieceX1',List),
                        saveElements(Board,'pieceX2',List2),
                        append(List,List2,FinalList),
                        length(FinalList,LengthOfFinalList),
                        if_then_else(LengthOfFinalList==0,fail,true).
 
+%checks if the playerY has pieces on the board
 checkIfExistsPiecesY(Board) :-  saveElements(Board,'pieceY1',List),
                        saveElements(Board,'pieceY2',List2),
                        append(List,List2,FinalList),
                        length(FinalList,LengthOfFinalList),
                        if_then_else(LengthOfFinalList==0,fail,true).
 
+%check if the game is over
 endGame(Board) :- listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                   length(FinalList,LengthOfFinalList),
                   listOfPiecesThatHasPossibleMoveY(FinalList2,Board),
