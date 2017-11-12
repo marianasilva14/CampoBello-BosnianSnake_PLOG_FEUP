@@ -15,7 +15,7 @@ getCode(Input) :- get_code(_TempInput),
 mode_game(1).
 player(playerX).
 user_is(player).
-level(level1).
+level(1).
 
 %Predicate that sets the player
 set_player(Player):-

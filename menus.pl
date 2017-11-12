@@ -80,7 +80,6 @@ printMainMenu:-
 
 mainMenu :- printMainMenu,
             now(X), setrand(X),
-            set_level(1),
             read(Input),
             set_mode_game(Input),
             readInput(Input).
@@ -110,8 +109,6 @@ readInput2(1) :- set_level(1),
 
 readInput2(2) :- set_level(2),
                 mainMenu.
-
-
 
 readInput(5) :- printHowToPlayMenu,
                 read(Input),

@@ -12,6 +12,8 @@
                   if_then_else(Curr_user=='pcX',set_user_is('player'),set_user_is('pcX')),
                  if_then_else(Curr_mode==3,
                  if_then_else(Curr_user=='pcX',set_user_is('pcY'),set_user_is('pcX')),true)),
+                 level(Curr_level),
+                 write(Curr_level),
                  if_then_else(endGame(BoardOut),(nl,write('End Game'),checkWinner(BoardOut)),play(BoardOut)),
                  sleep(1).
 

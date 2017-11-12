@@ -6,3 +6,5 @@
 :- include('levelDifficulty.pl').
 
 campoBello :- mainMenu.
+
+reload:-reconsult('/Users/francisca/Documents/FEUP/3 ano/1 semestre/PLOG/feup-PLOG/CampoBello.pl').
