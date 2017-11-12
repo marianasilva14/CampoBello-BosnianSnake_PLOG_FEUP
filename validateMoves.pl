@@ -194,7 +194,7 @@ validateMovePC('areaX2',LastCol,LastRow,Ncol,Nrow,Board) :- if_then_else((LastCo
                                                                                                                                       Piece\='empty');
                                                                                                                                       (RowTemp is LastRow-2,
                                                                                                                                       Ncol == LastCol,
-                                                                                                                                      Nrow == LastRow-2,
+                                                                                                                                      Nrow == RowTemp,
                                                                                                                                       getPiece(Board,Nrow,Ncol,Piece),
                                                                                                                                       Piece\='empty'))),
 

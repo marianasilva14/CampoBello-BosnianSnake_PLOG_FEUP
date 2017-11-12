@@ -73,7 +73,7 @@ mainMenu :- printMainMenu,
 
 readInput(0) :- mainMenu.
 
-readInput(1) :- finalBoard(Board),printFinalBoard(Board),
+readInput(1) :- initialBoard(Board),printFinalBoard(Board),
                 play(Board),
                 mainMenu.
 
