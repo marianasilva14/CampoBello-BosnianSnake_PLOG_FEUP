@@ -7,8 +7,8 @@
                  chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece,Area, BoardOut),nl,nl,
                  if_then_else((Curr_mode==2,Curr_user=='pcX'),set_user_is('player'),(set_user_is('pcX'),
-                 if_then_else((Curr_mode==3,Curr_user=='pcX'),set_user_is('pcY'),set_user_is('pcX')))),trace,
-                 if_then_else(checkIfIsNotEndGame(BoardOut),play(BoardOut),(nl,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))),
+                 if_then_else((Curr_mode==3,Curr_user=='pcX'),set_user_is('pcY'),set_user_is('pcX')))),
+                 if_then_else(endGame(BoardOut),(nl,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut)),play(BoardOut)),
                  sleep(1).
 
   chooseSourceCoords(RowSource, ColSource,Board,Piece) :-   mode_game(Curr_mode),
@@ -440,18 +440,14 @@ checkPieces('pieceY1',Board) :- getElement(Board,_,_,'pieceY1').
 checkPieces('pieceY2',Board) :- getElement(Board,_,_,'pieceY2').
 
 
-checkIfIsNotEndGame(Board) :- mode_game(Curr_mode),
-                  user_is(Curr_user),
-                  player(Curr_player),
-                  if_then_else(((Curr_mode == 1,Curr_player=='playerX');(Curr_mode == 2, Curr_user=='pcX');(Curr_mode == 3, Curr_user=='pcX')),
-                  (checkPieces('pieceX1',Board),checkPieces('pieceX2',Board),
+endGame(Board) :- if_then_else((checkPieces('pieceX1',Board),checkPieces('pieceX2',Board)),fail,true),
                   listOfPiecesThatHasPossibleMoveX(FinalList,Board),
                   length(FinalList,LengthOfFinalList),
-                  if_then_else(LengthOfFinalList==0,fail,true)),
-                  (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board),
+                  if_then_else(LengthOfFinalList==0,fail,true),
+                  if_then_else((checkPieces('pieceY1',Board),checkPieces('pieceY2',Board)),fail,true),
                   listOfPiecesThatHasPossibleMoveY(FinalList,Board),
                   length(FinalList,LengthOfFinalList),
-                  if_then_else(LengthOfFinalList==0,fail,true))).
+                  if_then_else(LengthOfFinalList==0,fail,true).
 
   calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
