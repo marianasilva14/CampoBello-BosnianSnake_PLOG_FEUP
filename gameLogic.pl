@@ -424,6 +424,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                       Ncol@<9,
                       Nrow@>5,
                       Nrow@<10).
+
   areaX(Nrow,Ncol):- (Ncol@>1,
                       Ncol@<6,
                       Nrow@>0,
@@ -443,10 +444,14 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                       Nrow@<10).
 
 
-  saveElements(Board,'pieceX1',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List).
-  saveElements(Board,'pieceX2',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List).
-  saveElements(Board,'pieceY1',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY1'),List).
-  saveElements(Board,'pieceY2',List):- setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List).
+  saveElements(Board,'pieceX1',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List),
+                                            true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List)).
+  saveElements(Board,'pieceX2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List),
+                                            true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List)).
+  saveElements(Board,'pieceY1',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY1'),List),
+                                            true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY1'),List)).
+  saveElements(Board,'pieceY2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List),
+                                            true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List)).
 
   getNrowNcol([],PointsXIn,PointsXOut,'playerX').
   getNrowNcol([],PointsYIn,PointsYOut,'playerY').
@@ -465,11 +470,15 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                            append(List,List2,FinalListX),
                            write(FinalListX),
                            getNrowNcol(FinalListX,0,PointsX,'playerX'),
+                           length(FinalListX,LengthOfFinalListX),
+                           if_then_else(LengthOfFinalListX==0,PointsX is 0,true),
                            write(PointsX),
                            saveElements(Board,'pieceY1',List3),
                            saveElements(Board,'pieceY2',List4),
                            append(List3,List4,FinalListY),
                            getNrowNcol(FinalListY,0,PointsY,'playerY'),
+                           length(FinalListY,LengthOfFinalListY),
+                           if_then_else(LengthOfFinalListY==0,PointsY is 0,true),
                            nl,
                            write('Points of playerX:'), write(PointsX),nl,
                            write('Points of playerY:'), write(PointsY),nl.
