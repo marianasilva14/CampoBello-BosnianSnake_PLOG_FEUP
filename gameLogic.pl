@@ -6,9 +6,10 @@
                  user_is(Curr_user),
                  chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece,Area, BoardOut),nl,nl,
-                 if_then_else((Curr_mode==2,Curr_user==pcX),set_user_is('player'),(set_user_is('pcX'),
-                 if_then_else((Curr_mode==3,Curr_user==pcX),set_user_is('pcY'),set_user_is('pcX')))),
-                 if_then_else(endGame(BoardOut),play(BoardOut),(nl,trace,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))).
+                 if_then_else((Curr_mode==2,Curr_user=='pcX'),set_user_is('player'),(set_user_is('pcX'),
+                 if_then_else((Curr_mode==3,Curr_user=='pcX'),set_user_is('pcY'),set_user_is('pcX')))),
+                 if_then_else(checkIfIsNotEndGame(BoardOut),play(BoardOut),(nl,trace,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))),
+                 sleep(1).
 
   chooseSourceCoords(RowSource, ColSource,Board,Piece) :-   mode_game(Curr_mode),
                                                             user_is(Curr_user),
@@ -110,7 +111,7 @@
                                   if_then_else(areaX1(Nrow,Ncol),Area='areaX1',
                                         (if_then_else(areaX2(Nrow,Ncol),Area='areaX2',
                                         (if_then_else(areaY1(Nrow,Ncol),Area='areaY1',
-                                        (if_then_else(areaY2(Nrow,Ncol),Area='areaY2',true))))))),
+                                        (if_then_else(areaY2(Nrow,Ncol),Area='areaY2','areaX1'))))))),
                                   if_then_else(
                                     % IF
                                     (validateMovePC(Area,Ncol,Nrow,Col,Row,Board)),
@@ -130,7 +131,7 @@
                                   if_then_else(areaX1(Nrow,Ncol),Area='areaX1',
                                         (if_then_else(areaX2(Nrow,Ncol),Area='areaX2',
                                         (if_then_else(areaY1(Nrow,Ncol),Area='areaY1',
-                                        (if_then_else(areaY2(Nrow,Ncol),Area='areaY2',true))))))),
+                                        (if_then_else(areaY2(Nrow,Ncol),Area='areaY2','areaX1'))))))),
                                   if_then_else(
                                     % IF
                                     (validateMovePC(Area,Ncol,Nrow,Col,Row,Board)),
@@ -202,7 +203,7 @@ checkIfCanMoveX(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                                                                                                 (choosePieceToRemove(BoardOut3, BoardOut4),
                                                                                                 setPiece(BoardOut4,Row,Col,Piece,BoardOut)),(setPiece(BoardOut3,Row,Col,Piece,BoardOut)))))),duplicate(BoardOut3,BoardOut)))),
                                                                         (if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'), (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
-                                                                        choosePieceToRemove(Board, BoardOut2, Piece),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
+                                                                        choosePieceToRemove(Board, BoardOut2),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
                                                                         (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
                                                                         setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
                                                                 printFinalBoard(BoardOut).
@@ -326,7 +327,7 @@ choosePieceToRemove(Board, BoardOut) :-mode_game(Curr_mode),
                                           checkIfCanRemoveY(Board, Col, Row)))),
                                           (if_then_else(Curr_user=='pcX',
                                           listOfPiecesThatCanRemoveX(Board,List),
-                                          listOfPiecesThatCanRemoveX(Board,List)),
+                                          listOfPiecesThatCanRemoveY(Board,List)),
                                           length(List,LengthOfList),
                                                             random(0,LengthOfList,Index),
                                                             nth0(Index,List,Row-Col))),
@@ -371,70 +372,6 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
 
   getElement(Board,Nrow,Ncol,Element) :- nth1(Nrow, Board, Row),
                                          nth1(Ncol,Row,Element).
-
-  checkPieces('pieceX1',Board) :- getElement(Board,_,_,'pieceX1').
-
-  checkPieces('pieceX2',Board) :- getElement(Board,_,_,'pieceX2').
-
-  checkPieces('pieceY1',Board) :- getElement(Board,_,_,'pieceY1').
-
-  checkPieces('pieceY2',Board) :- getElement(Board,_,_,'pieceY2').
-
-  checkMoves('pieceX1', Board) :- getElement(Board, Nrow, Ncol, 'pieceX1'),
-                              NewRow is Nrow+2,
-                              Newcol is Ncol+2,
-                              (getPiece(Board,NewRow,Newcol,Piece),
-                              Piece \='empty');
-                              (getPiece(Board,Nrow,Newcol,Piece),
-                              Piece \='empty');
-                              (getPiece(Board,NewRow,Ncol,Piece),
-                              Piece \='empty').
-
-  checkMoves('pieceX2', Board) :- getElement(Board, Nrow, Ncol, 'pieceX2'),
-                             NewRow is Nrow+2,
-                             Newcol is Ncol+2,
-                             Newrow is Nrow-2,
-                            (getPiece(Board,Nrow,Newcol,Piece),
-                            Piece \='empty');
-                            (getPiece(Board,NewRow,Ncol,Piece),
-                            Piece \='empty');
-                            (getPiece(Board,Newrow,Newcol,Piece),
-                            Piece \='empty').
-
-  checkMoves('pieceY1', Board) :- getElement(Board, Nrow, Ncol, 'pieceY1'),
-                            NewRow is Nrow+2,
-                            Newcol is Ncol+2,
-                            NewCol is Ncol-2,
-                            (getPiece(Board,NewRow,NewCol,Piece),
-                            Piece \='empty');
-                            (getPiece(Board,NewRow,Newcol,Piece),
-                            Piece \='empty');
-                            (getPiece(Board,Nrow,NewCol,Piece),
-                            Piece \='empty').
-
-  checkMoves('pieceY2', Board) :- getElement(Board, Nrow, Ncol, 'pieceY2'),
-                            NewRow is Nrow-2,
-                            Newcol is Ncol-2,
-                            (getPiece(Board,NewRow,Newcol,Piece),
-                            Piece \='empty');
-                            (getPiece(Board,Nrow,Newcol,Piece),
-                            Piece \='empty');
-                            (getPiece(Board,NewRow,Ncol,Piece),
-                            Piece \='empty').
-
-  endGame(Board) :- mode_game(Curr_mode),
-                    user_is(Curr_user),
-                    player(Curr_player),
-                    if_then_else(((Curr_mode == 1,Curr_player=='playerX');(Curr_mode == 2, Curr_user=='pcX');(Curr_mode == 3, Curr_user=='pcX')),
-                    (checkPieces('pieceX1',Board),checkPieces('pieceX2',Board),
-                    checkMoves('pieceX1',Board),checkMoves('pieceX2',Board)),
-                        (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board),
-                        checkMoves('pieceY1',Board),checkMoves('pieceY2',Board))).
-
-  areaPiece(Nrow,Ncol,Area):-if_then_else(areaX1(Nrow,Ncol),Area=='areaX1',
-                                (if_then_else(areaX2(Nrow,Ncol),Area=='areaX2',
-                                (if_then_else(areaY1(Nrow,Ncol),Area=='areaY1',
-                                (if_then_else(areaY2(Nrow,Ncol),Area=='areaY2',true))))))).
 
   areaX1(Nrow,Ncol):- (Ncol@>1,
                       Ncol@<6,
@@ -493,6 +430,29 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                                                   PointsYOut is PointsYIn+1),
                                                                       getNrowNcol(Rest,PointsYIn,PointsYOut,'playerY').
 
+
+checkPieces('pieceX1',Board) :- getElement(Board,_,_,'pieceX1').
+
+checkPieces('pieceX2',Board) :- getElement(Board,_,_,'pieceX2').
+
+checkPieces('pieceY1',Board) :- getElement(Board,_,_,'pieceY1').
+
+checkPieces('pieceY2',Board) :- getElement(Board,_,_,'pieceY2').
+
+
+checkIfIsNotEndGame(Board) :- mode_game(Curr_mode),
+                  user_is(Curr_user),
+                  player(Curr_player),
+                  if_then_else(((Curr_mode == 1,Curr_player=='playerX');(Curr_mode == 2, Curr_user=='pcX');(Curr_mode == 3, Curr_user=='pcX')),
+                  (checkPieces('pieceX1',Board),checkPieces('pieceX2',Board),
+                  listOfPiecesThatHasPossibleMoveX(FinalList,Board),
+                  length(FinalList,LengthOfFinalList),
+                  if_then_else(LengthOfFinalList==0,fail,true)),
+                  (checkPieces('pieceY1',Board),checkPieces('pieceY2',Board),
+                  listOfPiecesThatHasPossibleMoveY(FinalList,Board),
+                  length(FinalList,LengthOfFinalList),
+                  if_then_else(LengthOfFinalList==0,fail,true))).
+
   calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX1',List),
                            saveElements(Board,'pieceX2',List2),
                            append(List,List2,FinalListX),
@@ -510,6 +470,7 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                            nl,
                            write('Points of playerX:'), write(PointsX),nl,
                            write('Points of playerY:'), write(PointsY),nl.
+
 
   checkWinner(Board,PointsX,PointsY) :- calculatePoints(Board,PointsX,PointsY),
                   if_then_else(PointsX@>PointsY,write('The winner is PlayerY'),write('The winner is PlayerX')).

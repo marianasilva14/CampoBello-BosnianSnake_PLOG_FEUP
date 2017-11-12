@@ -25,6 +25,16 @@ finalBoard([[empty,noPiece,noPiece,noPiece,noPiece,empty,empty,empty,empty],
 [noPiece,empty,empty,empty,noPiece,noPiece,noPiece,empty,empty],
 [empty,empty,empty,empty,noPiece,noPiece,noPiece,noPiece,empty]]).
 
+middleBoard([[empty,pieceX1,noPiece,noPiece,noPiece,empty,empty,empty,empty],
+[empty,empty,noPiece,noPiece,pieceY2,empty,empty,empty,noPiece],
+[empty,empty,empty,pieceX1,noPiece,empty,empty,noPiece,noPiece],
+[empty,empty,empty,empty,pieceY1,empty,noPiece,noPiece,noPiece],
+[noPiece,pieceX1,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece],
+[noPiece,noPiece,pieceX2,empty,noPiece,empty,empty,empty,empty],
+[noPiece,noPiece,empty,empty,pieceY2,noPiece,empty,empty,empty],
+[noPiece,empty,empty,empty,noPiece,noPiece,noPiece,empty,empty],
+[empty,empty,empty,empty,noPiece,noPiece,noPiece,noPiece,empty]]).
+
 printFinalBoard([L|Ls]):-
     nl,
     printLetters,nl,
