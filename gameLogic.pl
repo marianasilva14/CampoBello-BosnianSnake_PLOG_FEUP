@@ -8,7 +8,7 @@
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece,Area, BoardOut),nl,nl,
                  if_then_else((Curr_mode==2,Curr_user==pcX),set_user_is('player'),(set_user_is('pcX'),
                  if_then_else((Curr_mode==3,Curr_user==pcX),set_user_is('pcY'),set_user_is('pcX')))),
-                 if_then_else(endGame(BoardOut),play(BoardOut),(nl,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))).
+                 if_then_else(endGame(BoardOut),play(BoardOut),(nl,trace,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))).
 
   chooseSourceCoords(RowSource, ColSource,Board,Piece) :-   mode_game(Curr_mode),
                                                             user_is(Curr_user),
@@ -235,6 +235,8 @@ checkIfCanMoveY(Ncol,Nrow,LastCol,LastRow,Board,Piece,BoardOut,Area) :-
                 (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
                 setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
         printFinalBoard(BoardOut).
+
+
 chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,Piece,Area,Continue) :-
                                                   write('ESTA AREA: '), write(Area),
                                                   if_then_else(areaX1(LastRow,LastCol),AreaDestiny='areaX1',
@@ -275,6 +277,11 @@ chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,P
                                                     printFinalBoard(BoardOut))))),
                                                     (nl,write('Row: '),write(LastRow),write('  Col: '),write(LastCol),nl,write(AreaDestiny),
                                                     nl,write('Lista: '),write(List),
+                                                    if_then_else(checkIfIsNotRedo(LastColPiece,LastRowPiece,Col,Row),
+                                                    if_then_else(LengthOfList==1,(write('Cant move to this Piece'),
+                                                    Continue is 1,duplicate(Board,BoardOut),
+                                                    printFinalBoard(BoardOut)),
+                                                    (Continue is 0,write('entrei'),
                                                                       random(0,LengthOfList,Index),
                                                                       nth0(Index,List,Row-Col),
                                                                       setPiece(Board,Row,Col,Piece,BoardOut2),
@@ -282,6 +289,14 @@ chooseNewJump(Board,BoardOut,LastColPiece,LastRowPiece,LastRow,LastCol,Row,Col,P
                                                                       nl,write('List Of Possible Moves: '),write(List),
                                                                       write(' Row: '),write(Row),write('  Col: '),write(Col),
                                                                       printFinalBoard(BoardOut))),
+                                                    (Continue is 0,
+                                                    random(0,LengthOfList,Index),
+                                                    nth0(Index,List,Row-Col),
+                                                    setPiece(Board,Row,Col,Piece,BoardOut2),
+                                                    setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut),
+                                                    nl,write('List Of Possible Moves: '),write(List),
+                                                    write(' Row: '),write(Row),write('  Col: '),write(Col),
+                                                    printFinalBoard(BoardOut))))),
                                                     (write('Without Possible Moves!'),
                                                     duplicate(Board,BoardOut),
                                                     printFinalBoard(BoardOut))).
