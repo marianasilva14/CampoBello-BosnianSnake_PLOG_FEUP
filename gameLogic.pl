@@ -112,7 +112,7 @@
                                         (if_then_else(areaY2(Nrow,Ncol),Area='areaY2',true))))))),
                                   if_then_else(
                                     % IF
-                                    (validateMovePC(Area,Ncol,Nrow,Col,Row,Board)),
+                                    (validateMove(Area,Ncol,Nrow,Col,Row,Board)),
                                     % THEN
                                     (scrollList(Rest, List_Temp,Board), append(List_Temp, [Piece-Nrow-Ncol], FinalList)),
                                     % ELSE
@@ -132,15 +132,15 @@
                                         (if_then_else(areaY2(Nrow,Ncol),Area='areaY2',true))))))),
                                   if_then_else(
                                     % IF
-                                    (validateMovePC(Area,Ncol,Nrow,Col,Row,Board)),
+                                    (validateMove(Area,Ncol,Nrow,Col,Row,Board)),
                                     % THEN
                                     (scrollList(Rest, List_Temp,Board), append(List_Temp, [Piece-Nrow-Ncol], FinalList)),
                                     % ELSE
                                     scrollList(Rest, FinalList,Board)).
 
   listOfValidDestinyMove(List,LastRow,LastCol,Area,Board) :-
-          if_then_else(setof(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List),true,
-                findall(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List)).
+          if_then_else(setof(Nrow-Ncol,validateMove(Area,LastCol,LastRow,Ncol,Nrow,Board),List),true,
+                findall(Nrow-Ncol,validateMove(Area,LastCol,LastRow,Ncol,Nrow,Board),List)).
 
 
   validateSourcePiece(Ncol, Nrow,Board,Piece) :- getPiece(Board, Nrow, Ncol, Piece),
