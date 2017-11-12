@@ -7,8 +7,8 @@
                  chooseSourceCoords(RowSource, ColSource, Board, Piece),
                  chooseDestinyCoords(RowSource, ColSource, Board, Piece,Area, BoardOut),nl,nl,
                  if_then_else((Curr_mode==2,Curr_user=='pcX'),set_user_is('player'),(set_user_is('pcX'),
-                 if_then_else((Curr_mode==3,Curr_user=='pcX'),set_user_is('pcY'),set_user_is('pcX')))),
-                 if_then_else(checkIfIsNotEndGame(BoardOut),play(BoardOut),(nl,trace,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))),
+                 if_then_else((Curr_mode==3,Curr_user=='pcX'),set_user_is('pcY'),set_user_is('pcX')))),trace,
+                 if_then_else(checkIfIsNotEndGame(BoardOut),play(BoardOut),(nl,write('End Game'),nl,checkWinner(BoardOut,PointsXOut,PointsYOut))),
                  sleep(1).
 
   chooseSourceCoords(RowSource, ColSource,Board,Piece) :-   mode_game(Curr_mode),
@@ -424,11 +424,11 @@ checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
                                                     if_then_else(areaX(Nrow,Ncol),PointsXOut is PointsXIn+3,
                                                                                   PointsXOut is PointsXIn+1),nl,
                                                                                   write(Nrow-Ncol),
-                                                                      getNrowNcol(Rest,PointsXIn,PointsXOut,'playerX').
+                                                                      getNrowNcol(Rest,PointsXOut,PointsXOutNew,'playerX').
   getNrowNcol([Nrow-Ncol|Rest],PointsYIn,PointsYOut,'playerY'):-
                                                     if_then_else(areaY(Nrow,Ncol),PointsYOut is PointsYIn+3,
                                                                                   PointsYOut is PointsYIn+1),
-                                                                      getNrowNcol(Rest,PointsYIn,PointsYOut,'playerY').
+                                                                      getNrowNcol(Rest,PointsYOut,PointsYOutNew,'playerY').
 
 
 checkPieces('pieceX1',Board) :- getElement(Board,_,_,'pieceX1').
