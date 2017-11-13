@@ -21,7 +21,7 @@ printMainMenu:-
   write('        |                                                                                           |'),nl,
   write('        |                                 2.Start Game PC vs Player                                 |'),nl,
   write('        |                                                                                           |'),nl,
-	write('        |                                   3.Start Game PC vs PC                                   |'),nl,
+  write('        |                                   3.Start Game PC vs PC                                   |'),nl,
   write('        |                                                                                           |'),nl,
   write('        |                                      4.Set Difficulty                                     |'),nl,
   write('        |                                                                                           |'),nl,
@@ -67,51 +67,51 @@ printMainMenu:-
 
     printSetLevelMenu:-
       nl,nl,nl,
-    write('         ___________________________________________________________________________________________'),nl,
-    write('        |                                                                                           |'),nl,
-    write('        |                                                                                           |'),nl,
-    write('        |                            Please choose the level of the Game:                           |'),nl,
-    write('        |                                                                                           |'),nl,
-    write('        |                                       1. Normal Difficulty                                |'),nl,
-    write('        |                                       2. Hard Difficulty                                  |'),nl,
-    write('        |                                                                                           |'),nl,
-    write('        |                                                                                           |'),nl,
-    write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl.
+      write('         ___________________________________________________________________________________________'),nl,
+      write('        |                                                                                           |'),nl,
+      write('        |                                                                                           |'),nl,
+      write('        |                            Please choose the level of the Game:                           |'),nl,
+      write('        |                                                                                           |'),nl,
+      write('        |                                       1. Normal Difficulty                                |'),nl,
+      write('        |                                       2. Hard Difficulty                                  |'),nl,
+      write('        |                                                                                           |'),nl,
+      write('        |                                                                                           |'),nl,
+      write('        |___________________________________________________________________________________________| '),nl,nl,nl,nl.
 
-mainMenu :- printMainMenu,
-            now(X), setrand(X),
-            read(Input),
-            set_mode_game(Input),
-            readInput(Input).
+      mainMenu :- printMainMenu,
+      now(X), setrand(X),
+      read(Input),
+      set_mode_game(Input),
+      readInput(Input).
 
-readInput(0) :- mainMenu.
+      readInput(0) :- mainMenu.
 
-readInput(1) :- initialBoard(Board),printFinalBoard(Board),
-                play(Board),
-                mainMenu.
+      readInput(1) :- initialBoard(Board),printFinalBoard(Board),
+      play(Board),
+      mainMenu.
 
-readInput(2) :- initialBoard(Board), printFinalBoard(Board),
-                set_user_is('pcX'),
-                play(Board),
-                mainMenu.
+      readInput(2) :- initialBoard(Board), printFinalBoard(Board),
+      set_user_is('pcX'),
+      play(Board),
+      mainMenu.
+      
+      readInput(3) :- initialBoard(Board), printFinalBoard(Board),
+      set_user_is('pcX'),
+      play(Board),
+      mainMenu.
 
-readInput(3) :- initialBoard(Board), printFinalBoard(Board),
-                set_user_is('pcX'),
-                play(Board),
-                mainMenu.
+      readInput(4) :- printSetLevelMenu,
+      read(Input),
+      readInput2(Input).
 
-readInput(4) :- printSetLevelMenu,
-                read(Input),
-                readInput2(Input).
+      readInput2(1) :- set_level(1),
+      mainMenu.
 
-readInput2(1) :- set_level(1),
-                mainMenu.
+      readInput2(2) :- set_level(2),
+      mainMenu.
 
-readInput2(2) :- set_level(2),
-                mainMenu.
+      readInput(5) :- printHowToPlayMenu,
+      read(Input),
+      readInput(Input).
 
-readInput(5) :- printHowToPlayMenu,
-                read(Input),
-                readInput(Input).
-
-readInput(6) :- write('Exiting...').
+      readInput(6) :- write('Exiting...').
