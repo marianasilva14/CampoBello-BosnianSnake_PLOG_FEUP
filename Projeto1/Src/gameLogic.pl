@@ -90,16 +90,23 @@ if_then_else(Curr_player == 'playerX', set_player('playerY'),set_player('playerX
 write('List Of Possible Moves: '),
 write(List), write(' Row: '),write(RowDestiny), write(' Col: '),
 numberToLetter(ColDestiny,Letter),write(Letter),nl.
-
 %Predicate that returns a list with parts that have possible moves
 listOfPiecesThatHasPossibleMoveX(FinalList,Board):-
-saveElements(Board,'pieceX1',List1),
-saveElements(Board,'pieceX2',List2),
+  saveElements(Board,'pieceX1',List1),
+  saveElements(Board,'pieceX2',List2),
+  append(List1,List2,ListOfDestiny),
+  scrollList(ListOfDestiny,FinalList,Board).
+
+%Predicate that returns a list with parts that have possible moves
+listOfPiecesThatHasPossibleMoveY(FinalList,Board):-
+saveElements(Board,'pieceY1',List1),
+saveElements(Board,'pieceY2',List2),
 append(List1,List2,ListOfDestiny),
 scrollList(ListOfDestiny,FinalList,Board).
 
-%Predicate that returns a list with parts that have possible moves
-listOfPiecesThatHasPossibleMoveY(FinalList,BosaveElements(Board,'pieceY1',LsaveElements(Board,'pieceY2',Lappend(List1,List2,ListOfDesscrollList(ListOfDestiny,FinalList,Bo%Predicate that walks through a list filling them with positions that have possible scrollList([],scrollList([Nrow-Ncol|Rest], FinalList,Board):-
+%Predicate that walks through a list filling them with positions that have possible moves.
+scrollList([],[],_).
+scrollList([Nrow-Ncol|Rest], FinalList,Board):-
 if_then_else(areaX1(Nrow,Ncol),Area='areaX1',
 (if_then_else(areaX2(Nrow,Ncol),Area='areaX2',
 (if_then_else(areaY1(Nrow,Ncol),Area='areaY1',
@@ -110,7 +117,10 @@ if_then_else(
 % THEN
 (scrollList(Rest, List_Temp,Board), append(List_Temp, [Nrow-Ncol], FinalList)),
 % ELSE
-scrollList(Rest, FinalList,Board)%Predicate that returns a list with valid target molistOfValidDestinyMove(List,LastRow,LastCol,Area,Board) :-
+scrollList(Rest, FinalList,Board)).
+
+%Predicate that returns a list with valid target moves
+listOfValidDestinyMove(List,LastRow,LastCol,Area,Board) :-
 if_then_else(setof(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List),true,
 findall(Nrow-Ncol,validateMovePC(Area,LastCol,LastRow,Ncol,Nrow,Board),List)).
 
