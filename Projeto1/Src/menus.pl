@@ -82,6 +82,7 @@ printMainMenu:-
       now(X), setrand(X),
       read(Input),
       set_mode_game(Input),
+      set_level(1),
       readInput(Input).
 
       readInput(0) :- mainMenu.
@@ -94,7 +95,7 @@ printMainMenu:-
       set_user_is('pcX'),
       play(Board),
       mainMenu.
-      
+
       readInput(3) :- initialBoard(Board), printFinalBoard(Board),
       set_user_is('pcX'),
       play(Board),
