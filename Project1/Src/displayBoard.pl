@@ -13,25 +13,6 @@ initialBoard([[empty,pieceX,pieceX,pieceX,pieceX,empty,empty,empty,empty],
 [pieceX,empty,empty,empty,pieceY,pieceY,pieceY,empty,empty],
 [empty,empty,empty,empty,pieceY,pieceY,pieceY,pieceY,empty]]).
 
-finalBoard([[empty,noPiece,noPiece,noPiece,noPiece,empty,empty,empty,empty],
-[empty,empty,noPiece,noPiece,noPiece,empty,empty,empty,noPiece],
-[empty,empty,empty,pieceX,noPiece,empty,empty,noPiece,noPiece],
-[empty,empty,empty,empty,pieceY,empty,noPiece,noPiece,noPiece],
-[noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece],
-[noPiece,noPiece,pieceX,empty,noPiece,empty,empty,empty,empty],
-[noPiece,noPiece,empty,empty,noPiece,noPiece,empty,empty,empty],
-[noPiece,empty,empty,empty,noPiece,noPiece,noPiece,empty,empty],
-[empty,empty,empty,empty,noPiece,noPiece,noPiece,noPiece,empty]]).
-
-middleBoard([[empty,pieceX,noPiece,noPiece,noPiece,empty,empty,empty,empty],
-[empty,empty,noPiece,noPiece,pieceY,empty,empty,empty,noPiece],
-[empty,empty,empty,pieceX,noPiece,empty,empty,noPiece,noPiece],
-[empty,empty,empty,empty,pieceY,empty,noPiece,noPiece,noPiece],
-[noPiece,pieceX,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece],
-[noPiece,noPiece,pieceX,empty,noPiece,empty,empty,empty,empty],
-[noPiece,noPiece,empty,empty,pieceY,noPiece,empty,empty,empty],
-[noPiece,empty,empty,empty,noPiece,noPiece,noPiece,empty,empty],
-[empty,empty,empty,empty,noPiece,noPiece,noPiece,noPiece,empty]]).
 
 printFinalBoard([L|Ls]):-
     nl,
