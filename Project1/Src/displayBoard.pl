@@ -1,37 +1,35 @@
 getSymbol(empty, ' ').
-getSymbol(pieceX1, 'X').
-getSymbol(pieceX2, 'X').
-getSymbol(pieceY1, 'Y').
-getSymbol(pieceY2, 'Y').
+getSymbol(pieceX, 'X').
+getSymbol(pieceY, 'Y').
 getSymbol(noPiece, 'N').
 
-initialBoard([[empty,pieceX1,pieceX1,pieceX1,pieceX1,empty,empty,empty,empty],
-[empty,empty,pieceX1,pieceX1,pieceX1,empty,empty,empty,pieceY1],
-[empty,empty,empty,pieceX1,pieceX1,empty,empty,pieceY1,pieceY1],
-[empty,empty,empty,empty,noPiece,empty,pieceY1,pieceY1,pieceY1],
-[pieceX2,pieceX2,pieceX2,noPiece,noPiece,noPiece,pieceY1,pieceY1,pieceY1],
-[pieceX2,pieceX2,pieceX2,empty,noPiece,empty,empty,empty,empty],
-[pieceX2,pieceX2,empty,empty,pieceY2,pieceY2,empty,empty,empty],
-[pieceX2,empty,empty,empty,pieceY2,pieceY2,pieceY2,empty,empty],
-[empty,empty,empty,empty,pieceY2,pieceY2,pieceY2,pieceY2,empty]]).
+initialBoard([[empty,pieceX,pieceX,pieceX,pieceX,empty,empty,empty,empty],
+[empty,empty,pieceX,pieceX,pieceX,empty,empty,empty,pieceY],
+[empty,empty,empty,pieceX,pieceX,empty,empty,pieceY,pieceY],
+[empty,empty,empty,empty,noPiece,empty,pieceY,pieceY,pieceY],
+[pieceX,pieceX,pieceX,noPiece,noPiece,noPiece,pieceY,pieceY,pieceY],
+[pieceX,pieceX,pieceX,empty,noPiece,empty,empty,empty,empty],
+[pieceX,pieceX,empty,empty,pieceY,pieceY,empty,empty,empty],
+[pieceX,empty,empty,empty,pieceY,pieceY,pieceY,empty,empty],
+[empty,empty,empty,empty,pieceY,pieceY,pieceY,pieceY,empty]]).
 
 finalBoard([[empty,noPiece,noPiece,noPiece,noPiece,empty,empty,empty,empty],
 [empty,empty,noPiece,noPiece,noPiece,empty,empty,empty,noPiece],
-[empty,empty,empty,pieceX1,noPiece,empty,empty,noPiece,noPiece],
-[empty,empty,empty,empty,pieceY1,empty,noPiece,noPiece,noPiece],
+[empty,empty,empty,pieceX,noPiece,empty,empty,noPiece,noPiece],
+[empty,empty,empty,empty,pieceY,empty,noPiece,noPiece,noPiece],
 [noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece],
-[noPiece,noPiece,pieceX2,empty,noPiece,empty,empty,empty,empty],
+[noPiece,noPiece,pieceX,empty,noPiece,empty,empty,empty,empty],
 [noPiece,noPiece,empty,empty,noPiece,noPiece,empty,empty,empty],
 [noPiece,empty,empty,empty,noPiece,noPiece,noPiece,empty,empty],
 [empty,empty,empty,empty,noPiece,noPiece,noPiece,noPiece,empty]]).
 
-middleBoard([[empty,pieceX1,noPiece,noPiece,noPiece,empty,empty,empty,empty],
-[empty,empty,noPiece,noPiece,pieceY2,empty,empty,empty,noPiece],
-[empty,empty,empty,pieceX1,noPiece,empty,empty,noPiece,noPiece],
-[empty,empty,empty,empty,pieceY1,empty,noPiece,noPiece,noPiece],
-[noPiece,pieceX1,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece],
-[noPiece,noPiece,pieceX2,empty,noPiece,empty,empty,empty,empty],
-[noPiece,noPiece,empty,empty,pieceY2,noPiece,empty,empty,empty],
+middleBoard([[empty,pieceX,noPiece,noPiece,noPiece,empty,empty,empty,empty],
+[empty,empty,noPiece,noPiece,pieceY,empty,empty,empty,noPiece],
+[empty,empty,empty,pieceX,noPiece,empty,empty,noPiece,noPiece],
+[empty,empty,empty,empty,pieceY,empty,noPiece,noPiece,noPiece],
+[noPiece,pieceX,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece,noPiece],
+[noPiece,noPiece,pieceX,empty,noPiece,empty,empty,empty,empty],
+[noPiece,noPiece,empty,empty,pieceY,noPiece,empty,empty,empty],
 [noPiece,empty,empty,empty,noPiece,noPiece,noPiece,empty,empty],
 [empty,empty,empty,empty,noPiece,noPiece,noPiece,noPiece,empty]]).
 

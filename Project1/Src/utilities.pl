@@ -65,6 +65,22 @@ set_level(Level):-
     numberToLetter(8,'H').
     numberToLetter(9,'I').
 
+  boardToNumbers([], []).
+  boardToNumbers([List | R], [NumberList | Numbers]):-
+  boardToNumbersLine(List, NumberList),
+  boardToNumbers(R, Numbers).
+
+
+
+  boardToNumbersLine([], []).
+  boardToNumbersLine([Element | Rest], [Number | NumberRest]):-
+  atomString(Element,Number),
+  boardToNumbersLine(Rest, NumberRest).
+
+  atomString(empty, 0).
+  atomString(pieceX, 1).
+  atomString(pieceY, 2).
+  atomString(noPiece, 3).
 %Predicate copying one board to another
 duplicate(_Old,_New):-fail.
 duplicate(_Old,_Old).

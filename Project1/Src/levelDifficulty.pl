@@ -1,14 +1,10 @@
 %Predicate that calculates the player's points through the received board
 evaluateBoards(Board,Points):-user_is(Curr_user),
 if_then_else(Curr_user=='pcX',
-(saveElements(Board,'pieceX1',List),
-saveElements(Board,'pieceX2',List2),
-append(List,List2,FinalList),
+(saveElements(Board,'pieceX',FinalList),
 getNrowNcol(FinalList,0,Points,'playerX')),
 
-(saveElements(Board,'pieceY1',List),
-saveElements(Board,'pieceY2',List2),
-append(List,List2,FinalList),
+(saveElements(Board,'pieceY',FinalList),
 getNrowNcol(FinalList,0,Points,'playerY'))).
 
 %Instance Nrow e Ncol

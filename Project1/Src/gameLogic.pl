@@ -90,16 +90,12 @@ write(List), write(' Row: '),write(RowDestiny), write(' Col: '),
 numberToLetter(ColDestiny,Letter),write(Letter),nl.
 %Predicate that returns a list with parts that have possible moves
 listOfPiecesThatHasPossibleMoveX(FinalList,Board):-
-  saveElements(Board,'pieceX1',List1),
-  saveElements(Board,'pieceX2',List2),
-  append(List1,List2,ListOfDestiny),
+  saveElements(Board,'pieceX',ListOfDestiny),
   scrollList(ListOfDestiny,FinalList,Board).
 
 %Predicate that returns a list with parts that have possible moves
 listOfPiecesThatHasPossibleMoveY(FinalList,Board):-
-saveElements(Board,'pieceY1',List1),
-saveElements(Board,'pieceY2',List2),
-append(List1,List2,ListOfDestiny),
+saveElements(Board,'pieceY',ListOfDestiny),
 scrollList(ListOfDestiny,FinalList,Board).
 
 %Predicate that walks through a list filling them with positions that have possible moves.
@@ -128,20 +124,16 @@ user_is(Curr_user),
 player(Curr_player),
 mode_game(Curr_mode),
 if_then_else(Curr_mode==1,if_then_else(Curr_player=='playerX',
-(Piece \= 'pieceY1',
-Piece \= 'pieceY2'),
-(Piece \= 'pieceX1',
-Piece \= 'pieceX2')),
+Piece \= 'pieceY',
+Piece \= 'pieceX'),
 if_then_else(Curr_user='pcX',
-(Piece \= 'pieceY1',
-Piece \= 'pieceY2'),
-(Piece \= 'pieceX1',
-Piece \= 'pieceX2'))),
+Piece \= 'pieceY',
+Piece \= 'pieceX')),
 Piece \= 'empty',
 Piece \= 'noPiece'.
 
 %Predicate that verifies the valid movements
-validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece,Area,BoardOut) :- if_then_else((Piece=='pieceX1';Piece=='pieceX2'),
+validateDestinyPiece(LastCol,LastRow,Ncol,Nrow,Board, Piece,Area,BoardOut) :- if_then_else(Piece=='pieceX',
 checkIfCanMoveX(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut,Area),
 checkIfCanMoveY(Ncol, Nrow, LastCol,LastRow,Board,Piece,BoardOut,Area)).
 
@@ -178,14 +170,14 @@ if_then_else(NewContinue\=1,
 (if_then_else(areaX2(FinalRow,FinalCol),Area3='areaX2',
 (if_then_else(areaY1(FinalRow,FinalCol),Area3='areaY1',
 (if_then_else(areaY2(FinalRow,FinalCol),Area3='areaY2',Area3=Area2))))))),
-(if_then_else((SecondPiece=='pieceY1';SecondPiece=='pieceY2'),
+(if_then_else((SecondPiece=='pieceY'),
 (choosePieceToRemove(BoardOut4, BoardOut5),
 setPiece(BoardOut5,FinalRow,FinalCol,Piece,BoardOut6), setPiece(BoardOut6,FinalRow,FinalCol,'noPiece',BoardOut)),(validateMove(Area3, Col, Row, FinalCol, FinalRow,BoardOut4),
 setPiece(BoardOut4,FinalRow,FinalCol,Piece,BoardOut))))),duplicate(BoardOut4,BoardOut))),
-(if_then_else((Piece2=='pieceY1';Piece2=='pieceY2'),
+(if_then_else((Piece2=='pieceY'),
 (choosePieceToRemove(BoardOut3, BoardOut4),
 setPiece(BoardOut4,Row,Col,Piece,BoardOut)),(setPiece(BoardOut3,Row,Col,Piece,BoardOut)))))),duplicate(BoardOut3,BoardOut)))),
-(if_then_else((NewPiece=='pieceY1';NewPiece=='pieceY2'), (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
+(if_then_else((NewPiece=='pieceY'), (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
 choosePieceToRemove(Board, BoardOut2),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
 (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
 setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
@@ -208,14 +200,14 @@ if_then_else(NewContinue\=1,
 (if_then_else(areaX2(FinalRow,FinalCol),Area3='areaX2',
 (if_then_else(areaY1(FinalRow,FinalCol),Area3='areaY1',
 (if_then_else(areaY2(FinalRow,FinalCol),Area3='areaY2',Area3=Area2))))))),
-(if_then_else((SecondPiece=='pieceX1';SecondPiece=='pieceX2'),
+(if_then_else((SecondPiece=='pieceX'),
 (choosePieceToRemove(BoardOut4, BoardOut5),
 setPiece(BoardOut5,FinalRow,FinalCol,Piece,BoardOut6), setPiece(BoardOut6,FinalRow,FinalCol,'noPiece',BoardOut)),(validateMove(Area3, Col, Row, FinalCol, FinalRow,BoardOut4),
 setPiece(BoardOut4,FinalRow,FinalCol,Piece,BoardOut))))),duplicate(BoardOut3,BoardOut))),
-(if_then_else((Piece2=='pieceX1';Piece2=='pieceX2'),
+(if_then_else((Piece2=='pieceX'),
 (choosePieceToRemove(BoardOut3, BoardOut4),
 setPiece(BoardOut4,Row,Col,Piece,BoardOut)),(setPiece(BoardOut3,Row,Col,Piece,BoardOut)))))),duplicate(BoardOut2,BoardOut)))),
-(if_then_else((NewPiece=='pieceX1';NewPiece=='pieceX2'), (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
+(if_then_else((NewPiece=='pieceX'), (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),
 choosePieceToRemove(Board, BoardOut2),setPiece(BoardOut2,LastRow,LastCol,'noPiece',BoardOut3),setPiece(BoardOut3,Nrow,Ncol,Piece,BoardOut)),
 (validateMove(Area, LastCol, LastRow, Ncol, Nrow,Board),setPiece(Board,LastRow,LastCol,'noPiece',BoardOut2),
 setPiece(BoardOut2,Nrow,Ncol,Piece,BoardOut))))),
@@ -321,15 +313,13 @@ findall(Nrow-Ncol,checkIfCanRemoveY(Board,Ncol,Nrow),List)).
 %Predicate that tests whether the piece chosen by player X to remove is one of his own pieces.
 checkIfCanRemoveX(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
 NewPiece \= 'empty',
-NewPiece \= 'pieceY1',
-NewPiece \= 'pieceY2',
+NewPiece \= 'pieceY',
 NewPiece \= 'noPiece'.
 
 %Predicate that tests whether the piece chosen by player X to remove is one of his own pieces.
 checkIfCanRemoveY(Board, Col, Row) :- getPiece(Board, Row, Col, NewPiece),
 NewPiece \= 'empty',
-NewPiece \= 'pieceX1',
-NewPiece \= 'pieceX2',
+NewPiece \= 'pieceX',
 NewPiece \= 'noPiece'.
 
 %Predicate that returns the part in a given row and column.
@@ -400,14 +390,10 @@ Nrow@>5,
 Nrow@<10).
 
 %Predicate thata does a list with the pieces of the player
-saveElements(Board,'pieceX1',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List),
-true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX1'),List)).
-saveElements(Board,'pieceX2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List),
-true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX2'),List)).
-saveElements(Board,'pieceY1',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY1'),List),
-true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY1'),List)).
-saveElements(Board,'pieceY2',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List),
-true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY2'),List)).
+saveElements(Board,'pieceX',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX'),List),
+true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceX'),List)).
+saveElements(Board,'pieceY',List):- if_then_else(setof(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY'),List),
+true,findall(Nrow-Ncol,getElement(Board,Nrow,Ncol,'pieceY'),List)).
 
 %Predicatethat checks which area the piece is in and calculate the points
 getNrowNcol([],PointsXIn,PointsXOut,'playerX').
@@ -422,15 +408,15 @@ PointsYOut is PointsYIn+1),
 getNrowNcol(Rest,PointsYOut,PointsYOutNew,'playerY').
 
 %Predicate that checks if the playerX has pieces on the board
-checkIfExistsPiecesX(Board) :- saveElements(Board,'pieceX1',List),
-saveElements(Board,'pieceX2',List2),
+checkIfExistsPiecesX(Board) :- saveElements(Board,'pieceX',List),
+saveElements(Board,'pieceX',List2),
 append(List,List2,FinalList),
 length(FinalList,LengthOfFinalList),
 if_then_else(LengthOfFinalList==0,fail,true).
 
 %Predicate that checks if the playerY has pieces on the board
-checkIfExistsPiecesY(Board) :-  saveElements(Board,'pieceY1',List),
-saveElements(Board,'pieceY2',List2),
+checkIfExistsPiecesY(Board) :-  saveElements(Board,'pieceY',List),
+saveElements(Board,'pieceY',List2),
 append(List,List2,FinalList),
 length(FinalList,LengthOfFinalList),
 if_then_else(LengthOfFinalList==0,fail,true).
@@ -446,15 +432,11 @@ if_then_else(LengthOfFinalList==0,true,fail);
 if_then_else(LengthOfFinalList2==0,true,fail)).
 
 %Predicate that calculates the points of each player
-calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX1',List),
-saveElements(Board,'pieceX2',List2),
-append(List,List2,FinalListX),
+calculatePoints(Board,PointsX,PointsY):- saveElements(Board,'pieceX',FinalListX),
 getNrowNcol(FinalListX,0,PointsX,'playerX'),
 length(FinalListX,LengthOfFinalListX),
 if_then_else(LengthOfFinalListX==0,PointsX is 0,true),
-saveElements(Board,'pieceY1',List3),
-saveElements(Board,'pieceY2',List4),
-append(List3,List4,FinalListY),
+saveElements(Board,'pieceY',FinalListY),
 getNrowNcol(FinalListY,0,PointsY,'playerY'),
 length(FinalListY,LengthOfFinalListY),
 if_then_else(LengthOfFinalListY==0,PointsY is 0,true),
