@@ -22,7 +22,7 @@ Col2 is Col+1,
 checkConectivity(Board,Row,Col2,Dim,Aux).
 
 
-%First position
+%First left position
 valuePosition(Position,List,Size):-
 Position==1,
 PositionRight is Position+1,
@@ -30,15 +30,37 @@ PositionDown is Position+Size,
 nth1(Position,List,Element),
 nth1(PositionRight,List,ElementRight),
 nth1(PositionDown,List,ElementDown),
-Element#=1,
-(ElementRight#=1;ElementDown#=1).
+Element#=1  #/\
+((ElementRight#=1) #\/ (ElementDown#=1)).
 
-%Last position
+%First right position
+valuePosition(Position,List,Size):-
+Position==Size,
+PositionLeft is Position-1,
+PositionDown is Position+Size,
+nth1(Position,List,Element),
+nth1(PositionLeft,List,ElementLeft),
+nth1(PositionDown,List,ElementDown),
+Element#=1  #/\ ((ElementLeft#=1) #\/ (ElementDown#=1)).
+
+%Last second position
 valuePosition(Position,List,Size):-
 Dim is Size*Size,
 Position==Dim,
 nth1(Position,List,Element),
 Element#=1.
+
+%Last first position
+valuePosition(Position,List,Size):-
+Dim is Size*Size,
+Value is Dim-Size,
+Position==Value,
+PositionRight is Position+1,
+PositionUp is Position-Size,
+nth1(Position,List,Element),
+nth1(PositionRight,List,ElementRight),
+nth1(PositionUp,List,ElementUp),
+Element#=1 #/\ ((ElementRight#=1) #\/ (ElementUp#=1)).
 
 %Left extreme
 valuePosition(Position,List,Size):-
@@ -55,8 +77,7 @@ nth1(Position,List,Element),
 nth1(PositionRight,List,ElementRight),
 nth1(PositionDown,List,ElementDown),
 nth1(PositionUp,List,ElementUp),
-Element#=1,
-(ElementRight#=1;ElementDown#=1;ElementUp#=1).
+Element#=1  #/\((ElementRight#=1) #\/ (ElementDown#=1) #\/ (ElementUp#=1)).
 
 %Right extreme
 valuePosition(Position,List,Size):-
@@ -72,8 +93,7 @@ nth1(Position,List,Element),
 nth1(PositionLeft,List,ElementLeft),
 nth1(PositionDown,List,ElementDown),
 nth1(PositionUp,List,ElementUp),
-Element#=1,
-(ElementLeft#=1;ElementDown#=1;ElementUp#=1).
+Element#=1  #/\ ((ElementLeft#=1) #\/ (ElementDown#=1) #\/ (ElementUp#=1)).
 
 %Central positions
 valuePosition(Position,List,Size):-
@@ -93,8 +113,7 @@ nth1(PositionRight,List,ElementRight),
 nth1(PositionLeft,List,ElementLeft),
 nth1(PositionDown,List,ElementDown),
 nth1(PositionUp,List,ElementUp),
-Element#=1,
-(ElementRight#=1;ElementUp#=1;ElementDown#=1;ElementLeft#=1).
+Element#=1  #/\((ElementRight#=1) #\/ (ElementUp#=1) #\/ (ElementDown#=1) #\/ (ElementLeft#=1)).
 
 %Up extreme
 valuePosition(Position,List,Size):-
@@ -108,8 +127,7 @@ nth1(Position,List,Element),
 nth1(PositionRight,List,ElementRight),
 nth1(PositionLeft,List,ElementLeft),
 nth1(PositionDown,List,ElementDown),
-Element#=1,
-(ElementRight#=1;ElementDown#=1;ElementLeft#=1).
+Element#=1  #/\ ((ElementRight#=1) #\/ (ElementDown#=1) #\/ (ElementLeft#=1)).
 
 %Down extreme
 valuePosition(Position,List,Size):-
@@ -125,5 +143,4 @@ nth1(Position,List,Element),
 nth1(PositionRight,List,ElementRight),
 nth1(PositionLeft,List,ElementLeft),
 nth1(PositionUp,List,ElementUp),
-Element#=1,
-(ElementRight#=1;ElementUp#=1;ElementLeft#=1).
+Element#=1 #/\ ((ElementRight#=1) #\/ (ElementUp#=1) #\/ (ElementLeft#=1)).
