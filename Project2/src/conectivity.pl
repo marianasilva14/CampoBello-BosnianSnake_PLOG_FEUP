@@ -1,7 +1,5 @@
 :- use_module(library(clpfd)).
-
-if_then_else(If, Then,_) :- If,!, Then.
-if_then_else(_, _, Else) :- Else.
+:- use_module(library(lists)).
 
 matrixToListOfLists(Board,List) :-
   append(Board,List).
@@ -9,30 +7,116 @@ matrixToListOfLists(Board,List) :-
 getPosition(Dim,Row,Col,Position) :-
   Position is (Row-1)*Dim+Col.
 
-checkConectivity(_,_,7,_).
+
 checkConectivity(Board,Row,Col,Dim) :-
   matrixToListOfLists(Board,List),
   getPosition(Dim,Row,Col,Position),
-  C is Col+1,
-  C2 is Col-1,
-  getPosition(Dim,Row,C,Position2),
-  getPosition(Dim,Row,C2,Position3),
-  P is Position+1,
-  P2 is Position-1,
-  P3 is Position+Dim,
-  P4 is Position mod Dim,
-  Dim2 is Dim*Dim,
-  element(Position, List, Value),
-  element(P, List, ValuePosition),
-  element(P2,List,ValuePosition2),
-  element(P3,List,ValuePosition3),
-  element(Position3,List,ValuePosition4),
-  element(Position2,List,ValuePosition3),
-  ((Position #= 1 #/\ (Value #=1 #/\ (ValuePosition #= 1 #\/ ValuePosition3#=1))) #\/
-  (Position #= Dim2 #/\ Value#=1) #\/
-  (1#=P4  #/\ (ValuePosition #= 1  #\/ ValuePosition4 #= 1 #\/ ValuePosition3#=1)) #\/
-  (0#=P4  #/\ (ValuePosition2 #= 1 #\/ ValuePosition4#=1 #\/ValuePosition3#=1)) #\/
-  ((0#\=P4 #/\ 1#\=P4), (ValuePosition=1 #\/ ValuePosition2#=1 #\/ ValuePosition3#=1 #\/ ValuePosition4#=1))),
-  Col2 is Col+1,
+  valuePosition(Position,List,Dim),
   Row2 is Row+1,
-  if_then_else(Row=Dim,checkConectivity(Board,1,Col2,Dim),checkConectivity(Board,Row2,Col,Dim)).
+  Col2 is Col+1.
+
+%First position
+  valuePosition(Position,List,Size):-
+    Position==1,
+    PositionRight is Position+1,
+    PositionDown is Position+Size,
+    nth1(Position,List,Element),
+    nth1(PositionRight,List,ElementRight),
+    nth1(PositionDown,List,ElementDown),
+    Element#=1,
+    (ElementRight#=1;ElementDown#=1).
+
+%Last position
+  valuePosition(Position,List,Size):-
+    Dim is Size*Size,
+    Position==Dim,
+    nth1(Position,List,Element),
+    Element#=1.
+
+%Left extreme
+  valuePosition(Position,List,Size):-
+    Position\=1,
+    Dim is Size*Size,
+    Value is Dim-Size,
+    Position \= Value,
+    PositionMod is Position mod Size,
+    PositionMod==1,
+    PositionRight is Position+1,
+    PositionDown is Position+Size,
+    PositionUp is Position-Size,
+    nth1(Position,List,Element),
+    nth1(PositionRight,List,ElementRight),
+    nth1(PositionDown,List,ElementDown),
+    nth1(PositionUp,List,ElementUp),
+    Element#=1,
+    (ElementRight#=1;ElementDown#=1;ElementUp#=1).
+
+%Right extreme
+  valuePosition(Position,List,Size):-
+    Position\=Size,
+    Dim is Size*Size,
+    Position \= Dim,
+    PositionMod is Position mod Size,
+    PositionMod==0,
+    PositionLeft is Position-1,
+    PositionDown is Position+Size,
+    PositionUp is Position-Size,
+    nth1(Position,List,Element),
+    nth1(PositionLeft,List,ElementLeft),
+    nth1(PositionDown,List,ElementDown),
+    nth1(PositionUp,List,ElementUp),
+    Element#=1,
+    (ElementLeft#=1;ElementDown#=1;ElementUp#=1).
+
+%Central positions
+  valuePosition(Position,List,Size):-
+    Position>Size,
+    Dim is Size*Size,
+    Value is Dim-Size,
+    Position<Value,
+    PositionMod is Position mod Size,
+    PositionMod\=0,
+    PositionMod\=1,
+    PositionRight is Position+1,
+    PositionLeft is Position-1,
+    PositionDown is Position+Size,
+    PositionUp is Position-Size,
+    nth1(Position,List,Element),
+    nth1(PositionRight,List,ElementRight),
+    nth1(PositionLeft,List,ElementLeft),
+    nth1(PositionDown,List,ElementDown),
+    nth1(PositionUp,List,ElementUp),
+    Element#=1,
+    (ElementRight#=1;ElementUp#=1;ElementDown#=1;ElementLeft#=1).
+
+%Up extreme
+    valuePosition(Position,List,Size):-
+      Position<Size,
+      Position\=Size,
+      Position\=1,
+      PositionRight is Position+1,
+      PositionLeft is Position-1,
+      PositionDown is Position+Size,
+      nth1(Position,List,Element),
+      nth1(PositionRight,List,ElementRight),
+      nth1(PositionLeft,List,ElementLeft),
+      nth1(PositionDown,List,ElementDown),
+      Element#=1,
+      (ElementRight#=1;ElementDown#=1;ElementLeft#=1).
+
+%Down extreme
+      valuePosition(Position,List,Size):-
+        Dim is Size*Size,
+        Value is Dim-Size,
+        Position>Size,
+        Position>Value,
+        Position<Dim,
+        PositionRight is Position+1,
+        PositionLeft is Position-1,
+        PositionUp is Position-Size,
+        nth1(Position,List,Element),
+        nth1(PositionRight,List,ElementRight),
+        nth1(PositionLeft,List,ElementLeft),
+        nth1(PositionUp,List,ElementUp),
+        Element#=1,
+        (ElementRight#=1;ElementUp#=1;ElementLeft#=1).
