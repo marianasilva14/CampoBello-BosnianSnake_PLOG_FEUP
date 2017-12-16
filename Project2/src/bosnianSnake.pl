@@ -13,18 +13,19 @@ bosnianSnake(N, List) :-
   nl, write('Board'),nl,
   write(Board),
   nl,nl,nl,
-  checkConectivity(Board,BeginRow,BeginCol, NR),
-  %write('Fez check connectivity'),
+  Aux is NR+1,
+  checkConectivity(Board,BeginRow,BeginCol, NR,Aux),
+  write('Fez check connectivity'),
   %cellsOfRestrictionOut(Board, NumberOut, RRow, NR),
   %cellsOfRestrictionOut(Board, NumberOut2, RRow2, NR),
-  %write('Fez cellsOfRestrictionOut'), nl, nl,
+  write('Fez cellsOfRestrictionOut'), nl, nl,
   %cellsAround(Board, IntRow, IntCol, NumberIn),
   %cellsAround(Board, IntRow2, IntCol2, NumberIn2),
-  %write('Fez cellsAround'), nl, nl,
-  %nl, nl, nl,
+  write('Fez cellsAround'), nl, nl,
+  nl, nl, nl,
   matrixToListOfLists(Board,List),
-  write(List).
-% labeling([], List).
+  write(List),
+  labeling([], List).
 
 getCellsAround(Board, ListOut, Nrow, Ncol) :-
   FinalRow1 is (Nrow + 1),
