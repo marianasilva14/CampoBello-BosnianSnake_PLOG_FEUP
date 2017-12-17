@@ -11,19 +11,14 @@ puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,RRow2-NumberOut2
 write(IntRow),
 board(NR, NC, Board),
 nl, write('Board'),nl,
-write(Board),
-nl,nl,nl,
-getPosition(NR,BeginRow,BeginCol,Position),
-checkConectivity(Board,NR,Position),
-write('Fez check connectivity'),
-%  cellsOfRestrictionOut(Board, NumberOut, RRow, NR),
-%  cellsOfRestrictionOut(Board, NumberOut2, RRow2, NR),
-write('Fez cellsOfRestrictionOut'), nl, nl,
-%cellsAround(Board, IntRow, IntCol, NumberIn),
-%  cellsAround(Board, IntRow2, IntCol2, NumberIn2),
-write('Fez cellsAround'), nl, nl,
-nl, nl, nl,
+write(Board),nl, nl,
 matrixToListOfLists(Board,List),
+headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
+cellsAround(List, IntRow, IntCol, NumberIn, NR),
+cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
+cellsOfRestrictionOut(List,NumberOut,RRow,NR),
+cellsOfRestrictionOut(List,NumberOut2,RRow2,NR),
+write('Fez headAndTailCells'),
 write(List),
 labeling([], List),
 printList(List,NR,0).
@@ -44,44 +39,55 @@ printHead(Head,Dim,N):-
   N1\=0,
   write(Head).
 
+headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR) :-
+getPosition(NR,BeginRow,BeginCol,Position),
+getPosition(NR,EndRow,EndCol,EndPosition),
+nth1(Position,List,Element),
+nth1(EndPosition,List,Element2),
+Element=1,
+Element2=1.
 
-getCellsAround(Board, ListOut, Nrow, Ncol) :-
-FinalRow1 is (Nrow + 1),
-FinalRow2 is (Nrow - 1),
-FinalCol1 is (Ncol + 1),
-FinalCol2 is (Ncol - 1),
-setof(Element,
-              (getElement(Board,FinalRow1,Ncol,Element);
-              getElement(Board,Nrow,FinalCol1,Element);
-              getElement(Board,FinalRow1,FinalCol1,Element);
-              getElement(Board,FinalRow2,Ncol,Element);
-              getElement(Board,Nrow,FinalCol2,Element);
-              getElement(Board,FinalRow2,FinalCol2,Element);
-              getElement(Board,FinalRow1,FinalCol2,Element);
-              getElement(Board,FinalRow2,FinalCol1,Element)),ListOut).
+getCellsAround(List, ListOut,Position,NR) :-
+  PositionUp is (Position -NR),
+  PositionUpLeft is PositionUp-1,
+  PositionUpRight is PositionUp+1,
+  PositionDown is (Position +NR),
+  PositionDownRight is PositionDown+1,
+  PositionDownLeft is PositionDown-1,
+  PositionRight is (Position + 1),
+  PositionLeft is (Position - 1),
+  setof(Element,
+              (nth1(PositionUp,List,Element);
+              nth1(PositionDown,List,Element);
+              nth1(PositionLeft,List,Element);
+              nth1(PositionRight,List,Element);
+              nth1(PositionUpLeft,List,Element);
+              nth1(PositionUpRight,List,Element);
+              nth1(PositionDownLeft,List,Element);
+              nth1(PositionDownRight,List,Element)),ListOut).
 
-getElement(Board,Nrow,Ncol,Element) :-
-nth1(Nrow, Board, Row),
-nth1(Ncol,Row,Element).
+getRowAux(_,L,L,Size,Size).
+getRowAux(List,ListaAux,ListOut,First,FinalRow):-
+  nth1(FinalRow,List,Element),
+  append([Element],ListaAux,Return),
+  FinalRow2 is FinalRow-1,
+  getRowAux(List,Return,ListOut,Size,FinalRow2).
 
-getCellsOfRestrictionOut(_,_,0,L,L).
-getCellsOfRestrictionOut(Board,Row,Size,ListIn,ListOut):-
-getElement(Board,Row,Size,Element),
-append([Element],ListIn,ListAux),
-FinalSize is Size-1,
-getCellsOfRestrictionOut(Board,Row,FinalSize,ListAux,ListOut).
+getRow(List,Row,ListOut,Size):-
+  Final is Row*Size,
+  First is Final-Size,
+  getRowAux(List,[],ListOut,First,Final).
 
-cellsOfRestrictionOut(Board,Number,Row,Size) :-
-Number2 is (Size - Number),
-getCellsOfRestrictionOut(Board,Row,Size,[],ListOut),
-global_cardinality(ListOut,[1-Number, 0-Number2]),
-write('ALIII').
+cellsOfRestrictionOut(List,Number,Row,Size) :-
+  Number2 is (Size - Number),
+  getRow(List,Row,ListOut,Size),
+  global_cardinality(ListOut,[1-Number, 0-Number2]).
 
-cellsAround(Board, Nrow, Ncol, Number) :-
-Number2 is (8 - Number),
-getCellsAround(Board, ListOut, Nrow, Ncol),
-global_cardinality(ListOut,[1-Number,0-Number2]),
-write('aquiiiii').
+cellsAround(List, Nrow, Ncol, Number, NR) :-
+  getPosition(NR,Nrow,Ncol,Position),
+  Number2 is (8 - Number),
+  getCellsAround(List, ListOut, Position, NR),
+  global_cardinality(ListOut,[1-Number,0-Number2]).
 
 board(_,0,[]).
 board(Size, NumberOfLists, [HList|TList]) :-
