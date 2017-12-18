@@ -10,7 +10,7 @@ Position is (Row-1)*Dim+Col.
 
 imposeConectivity([],_,_,_).
 
-imposeConectivity([Head|Tail],List,Dim,Position) :-
+imposeConectivity([_|Tail],List,Dim,Position) :-
 getNeighbours(Position,Neighbours,List,Dim),
 getAllNeighbours(Position,AllNeighbours,List,Dim),
 imposePosition(Position,Neighbours,AllNeighbours,List,Dim),

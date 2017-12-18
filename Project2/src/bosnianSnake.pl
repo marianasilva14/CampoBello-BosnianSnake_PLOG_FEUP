@@ -20,22 +20,22 @@ cellsOfRestrictionOut(List,NumberOut2,RRow2,NR),
 imposeConectivity(List,List,NR,1),
 labeling([], List),
 list_to_matrix(List,NR,Board),
-printFinalBoard(Board,NR).
+printFinalBoard(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,NR).
 
 
-printFinalBoard([L|Ls],Size):-
+printFinalBoard([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,Size):-
     nl,
-    printBoard([L|Ls],Size),
+    printBoard([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,Size),
     printLine(Size).
 
 printSpaces(0).
 printSpaces(Size):-
-write(' |   '),
+write('    |'),
 NewSize is Size-1,
 printSpaces(NewSize).
 
 printLine(Size):-
-  write(' '),
+  write('    '),
   printLineAux(Size).
 printLineAux(0).
 printLineAux(Size):-
@@ -44,26 +44,78 @@ printLineAux(Size):-
   printLineAux(S).
 
 
-printBoard([],_).
-printBoard([L|Ls],Size) :-
+printBoard([],_,_,_,_,_,_,_,_,_,_,_,_,_).
+printBoard([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,Size) :-
           printLine(Size),nl,
           S is Size+1,
           printSpaces(S),nl,
-          printFinalRow(L),nl,
+          printFinalRow(L,Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2),nl,
+          Row2 is Row+1,
           printSpaces(S),nl,
-          printBoard(Ls,Size).
+          printBoard(Ls,Row2,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,Size).
 
-printFinalRow([X|Xs]):-
-        write(' |'), printRow([X|Xs]).
-printRow([X|Xs]):-
+printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2):-
+        Row==RRow2,
+        write(NumberOut2),
+        write('   |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+
+printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2):-
+        Row==RRow,
+        write(NumberOut),
+        write('   |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+
+printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2):-
+        Row\=RRow,
+        Row\=RRow2,
+        write('    |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+
+printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2):-
+        IntRow==Row,
+        IntCol==Col,
+        write(' '),
+        write(NumberIn),
+        write('  '),write('|'),
+        Col2 is Col+1,
+        printRow(Xs,Row,Col2,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+
+
+printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2):-
+        IntRow2==Row,
+        IntCol2==Col,
+        write(' '),
+        write(NumberIn2),
+        write('  '),write('|'),
+        Col2 is Col+1,
+        printRow(Xs,Row,Col2,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+
+printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2):-
+        ((IntRow2\=Row,
+        IntCol2\=Col);
+        (IntRow2==Row,
+        IntCol2\=Col);
+        (IntRow2\=Row,
+        IntCol2==Col)),
         X==1,
         write('****'),write('|'),
-        printRow(Xs).
-printRow([X|Xs]):-
-        X\=1,
+        Col2 is Col+1,
+        printRow(Xs,Row,Col2,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+
+printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2):-
+        ((IntRow2\=Row,
+        IntCol2\=Col);
+        (IntRow2==Row,
+        IntCol2\=Col);
+        (IntRow2\=Row,
+        IntCol2==Col)),
+        X==0,
         write('    '),write('|'),
-        printRow(Xs).
-printRow([]).
+        Col2 is Col+1,
+        printRow(Xs,Row,Col2,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+
+printRow([],_,_,_,_,_,_,_,_).
 
 list_to_matrix([], _, []).
 list_to_matrix(List, Size, [Row|Matrix]):-
