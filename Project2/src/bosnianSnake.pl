@@ -4,7 +4,7 @@
 :- include('conectivity.pl').
 
 puz(1, [1-1, 6-6], 6-6, [2-2,5-1], [], [3-5-6, 4-2-6]).
-puz(2, [1-1, 12-12], 12-12, [2-2,5-1], [], [3-5-6, 4-2-6]).
+puz(2, [1-1, 12-12], 12-12, [], [2-2,5-1], [3-5-6, 4-2-6]).
 puz(3, [1-1, 8-8], 8-8, [2-2,5-1], [], [3-5-6, 4-2-6]).
 puz(4, [1-1, 24-24], 24-24, [2-2,5-1], [], [3-5-6, 4-2-6]).
 
@@ -15,12 +15,27 @@ matrixToListOfLists(Board,List),
 headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
 cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
-cellsOfRestrictionOut(List,NumberOut,RRow,NR),
-cellsOfRestrictionOut(List,NumberOut2,RRow2,NR),
+cellsOfRestrictionOut_ROW(List,NumberOut,RRow,NR),
+cellsOfRestrictionOut_ROW(List,NumberOut2,RRow2,NR),
 imposeConectivity(List,List,NR,1),
 labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,NR).
+
+bosnianSnake(N, List) :-
+puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [], [CCol-NumberOut,CCol2-NumberOut2], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
+board(NR, NC, Board),
+matrixToListOfLists(Board,List),
+headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
+cellsAround(List, IntRow, IntCol, NumberIn, NR),
+cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
+cellsOfRestrictionOut_COL(List,NumberOut,CCol,NR),
+cellsOfRestrictionOut_COL(List,NumberOut2,CCol2,NR),
+write('aquiii'),nl,nl,
+%imposeConectivity(List,List,NR,1),
+labeling([], List),
+list_to_matrix(List,NR,Board),
+printFinalBoard(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,CCol,NumberOut,CCol2,NumberOut2,NR).
 
 
 printFinalBoard([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,Size):-
@@ -166,9 +181,36 @@ getRow(List,Row,ListOut,Size):-
   First is Final-Size,
   getRowAux(List,[],ListOut,First,Final).
 
-cellsOfRestrictionOut(List,Number,Row,Size) :-
+
+getColAux(List,ListaAux,ListOut,First,FinalCol,Size):-
+  nth1(FinalCol,List,Element),
+  append([Element],ListaAux,Return),
+  FinalCol\=First,
+  FinalCol2 is FinalCol-Size,
+  getColAux(List,Return,ListOut,First,FinalCol2,Size).
+
+getColAux(List,ListaAux,ListOut,First,FinalCol,Size):-
+  nth1(FinalCol,List,Element),
+  append([Element],ListaAux,ListOut),
+  FinalCol==First.
+
+
+getCol(List,Col,ListOut,Size):-
+  Dim is Size*Size,
+  Value is Dim-Size,
+  Final is Value+Col,
+  getColAux(List,[],ListOut,Col,Final,Size).
+
+cellsOfRestrictionOut_ROW(List,Number,Row,Size) :-
   Number2 is (Size - Number),
   getRow(List,Row,ListOut,Size),
+  global_cardinality(ListOut,[1-Number, 0-Number2]).
+
+cellsOfRestrictionOut_COL(List,Number,Col,Size) :-
+  Number2 is (Size - Number),
+  getCol(List,Col,ListOut,Size),
+  write('DEPOIS'),nl,nl,
+  write(ListOut),nl,nl,
   global_cardinality(ListOut,[1-Number, 0-Number2]).
 
 cellsAround(List, Nrow, Ncol, Number, NR) :-
