@@ -7,7 +7,7 @@
 puz(1, [1-1, 6-6], 6-6, [2-2,5-1], [], [3-5-6, 4-2-6]).
 puz(2, [1-1, 12-12], 12-12, [], [2-2,5-1], [3-5-6, 4-2-6]).
 puz(3, [1-1, 8-8], 8-8, [2-2,_], [5-1,_], [3-5-6, 4-2-6]).
-puz(4, [1-1, 24-24], 24-24, [2-2,5-1], [], [3-5-6, 4-2-6]).
+puz(4, [1-1, 6-6], 6-6, [2-2,5-1], [], [3-5-3, 4-2-6]).
 
 bosnianSnake(N, List) :-
 puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,RRow2-NumberOut2], [], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
@@ -32,7 +32,7 @@ cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut_COL(List,NumberOut,CCol,NR),
 cellsOfRestrictionOut_COL(List,NumberOut2,CCol2,NR),
-%imposeConectivity(List,List,NR,1),
+imposeConectivity(List,List,NR,1),
 labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard2(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,CCol,NumberOut,CCol2,NumberOut2,NR).
@@ -46,11 +46,10 @@ cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut_ROW(List,NumberOut,RRow,NR),
 cellsOfRestrictionOut_COL(List,NumberOut2,CCol,NR),
-%imposeConectivity(List,List,NR,1),
+imposeConectivity(List,List,NR,1),
 labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard3(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,CCol,NumberOut2,NR).
-
 
 list_to_matrix([], _, []).
 list_to_matrix(List, Size, [Row|Matrix]):-
