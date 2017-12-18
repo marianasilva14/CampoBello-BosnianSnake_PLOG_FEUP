@@ -4,7 +4,9 @@
 :- include('conectivity.pl').
 
 puz(1, [1-1, 6-6], 6-6, [2-2,5-1], [], [3-5-6, 4-2-6]).
-
+puz(2, [1-1, 12-12], 12-12, [2-2,5-1], [], [3-5-6, 4-2-6]).
+puz(3, [1-1, 8-8], 8-8, [2-2,5-1], [], [3-5-6, 4-2-6]).
+puz(4, [1-1, 24-24], 24-24, [2-2,5-1], [], [3-5-6, 4-2-6]).
 
 bosnianSnake(N, List) :-
 puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,RRow2-NumberOut2], [], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
@@ -17,23 +19,56 @@ cellsOfRestrictionOut(List,NumberOut,RRow,NR),
 cellsOfRestrictionOut(List,NumberOut2,RRow2,NR),
 imposeConectivity(List,List,NR,1),
 labeling([], List),
-printList(List,NR,0).
+list_to_matrix(List,NR,Board),
+printFinalBoard(Board,NR).
 
-printList([],_,_).
-printList([Head|Tail],Dim,N):-
-  printHead(Head,Dim,N),
-  N1 is N+1,
-  printList(Tail,Dim,N1).
 
-printHead(Head,Dim,N):-
-  N1 is N mod Dim,
-  N1==0,nl,
-  write(Head).
+printFinalBoard([L|Ls],Size):-
+    nl,
+    printBoard([L|Ls],Size),
+    printLine(Size).
 
-printHead(Head,Dim,N):-
-  N1 is N mod Dim,
-  N1\=0,
-  write(Head).
+printSpaces(0).
+printSpaces(Size):-
+write(' |   '),
+NewSize is Size-1,
+printSpaces(NewSize).
+
+printLine(Size):-
+  write(' '),
+  printLineAux(Size).
+printLineAux(0).
+printLineAux(Size):-
+  write('-----'),
+  S is Size-1,
+  printLineAux(S).
+
+
+printBoard([],_).
+printBoard([L|Ls],Size) :-
+          printLine(Size),nl,
+          S is Size+1,
+          printSpaces(S),nl,
+          printFinalRow(L),nl,
+          printSpaces(S),nl,
+          printBoard(Ls,Size).
+
+printFinalRow([X|Xs]):-
+        write(' |'), printRow([X|Xs]).
+printRow([X|Xs]):-
+        write(' '), write(X),write('  |'),
+        printRow(Xs).
+printRow([]).
+
+list_to_matrix([], _, []).
+list_to_matrix(List, Size, [Row|Matrix]):-
+  list_to_matrix_row(List, Size, Row, Tail),
+  list_to_matrix(Tail, Size, Matrix).
+
+list_to_matrix_row(Tail, 0, [], Tail).
+list_to_matrix_row([Item|List], Size, [Item|Row], Tail):-
+  NSize is Size-1,
+  list_to_matrix_row(List, NSize, Row, Tail).
 
 headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR) :-
 getPosition(NR,BeginRow,BeginCol,Position),
