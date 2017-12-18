@@ -56,7 +56,12 @@ printBoard([L|Ls],Size) :-
 printFinalRow([X|Xs]):-
         write(' |'), printRow([X|Xs]).
 printRow([X|Xs]):-
-        write(' '), write(X),write('  |'),
+        X==1,
+        write('****'),write('|'),
+        printRow(Xs).
+printRow([X|Xs]):-
+        X\=1,
+        write('    '),write('|'),
         printRow(Xs).
 printRow([]).
 
