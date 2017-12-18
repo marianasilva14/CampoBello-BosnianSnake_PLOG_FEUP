@@ -18,11 +18,16 @@ printFinalBoard3([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2
     printLine(Size).
 
 
-printSpaces(0).
-printSpaces(Size):-
+printSpaces([]).
+printSpaces([X|Xs]):-
+X==0,
 write('    |'),
-NewSize is Size-1,
-printSpaces(NewSize).
+printSpaces(Xs).
+
+printSpaces([X|Xs]):-
+X==1,
+write('****|'),
+printSpaces(Xs).
 
 printLine(Size):-
   write('    '),
@@ -37,31 +42,22 @@ printLineAux(Size):-
 printBoard([],_,_,_,_,_,_,_,_,_,_,_,_,_).
 printBoard([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,Size) :-
           printLine(Size),nl,
-          S is Size+1,
-          printSpaces(S),nl,
-          printFinalRow(L,Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2),nl,
+          printFinalRow(L,Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2),
           Row2 is Row+1,
-          printSpaces(S),nl,
           printBoard(Ls,Row2,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,Size).
 
 printBoard2([],_,_,_,_,_,_,_,_,_,_,_,_,_).
 printBoard2([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,CCol,NumberOut,CCol2,NumberOut2,Size) :-
-          S is Size+1,
           printLine(Size),nl,
-          printSpaces(S),nl,
-          printFinalRow2(L,Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),nl,
+          printFinalRow2(L,Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),
           Row2 is Row+1,
-          printSpaces(S),nl,
           printBoard2(Ls,Row2,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,CCol,NumberOut,CCol2,NumberOut2,Size).
 
 printBoard3([],_,_,_,_,_,_,_,_,_,_,_).
 printBoard3([L|Ls],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,Size) :-
           printLine(Size),nl,
-          S is Size+1,
-          printSpaces(S),nl,
-          printFinalRow(L,Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut),nl,
+          printFinalRow(L,Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut),
           Row2 is Row+1,
-          printSpaces(S),nl,
           printBoard3(Ls,Row2,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,Size).
 
 printCol(_,_,S,S).
@@ -107,34 +103,58 @@ printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,_,
         Row==RRow2,
         write(NumberOut2),
         write('   |'),
-        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+        printSpaces([X|Xs]),nl,
+        write('    |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),nl,
+        write('    |'),
+        printSpaces([X|Xs]),nl.
 
 printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,_,_):-
         Row==RRow,
         write(NumberOut),
         write('   |'),
-        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+        printSpaces([X|Xs]),nl,
+        write('    |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),nl,
+        write('    |'),
+        printSpaces([X|Xs]),nl.
 
 printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,_,RRow2,_):-
         Row\=RRow,
         Row\=RRow2,
         write('    |'),
-        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+        printSpaces([X|Xs]),nl,
+        write('    |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),nl,
+        write('    |'),
+        printSpaces([X|Xs]),nl.
 
 printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut):-
         Row==RRow,
         write(NumberOut),
         write('   |'),
-        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+        printSpaces([X|Xs]),nl,
+        write('    |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),nl,
+        write('    |'),
+        printSpaces([X|Xs]),nl.
 
 printFinalRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,_):-
         Row\=RRow,
         write('    |'),
-        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+        printSpaces([X|Xs]),nl,
+        write('    |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),nl,
+        write('    |'),
+        printSpaces([X|Xs]),nl.
 
 printFinalRow2([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2):-
         write('    |'),
-        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2).
+        printSpaces([X|Xs]),nl,
+        write('    |'),
+        printRow([X|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2),nl,
+        write('    |'),
+        printSpaces([X|Xs]),nl.
 
 printRow([_|Xs],Row,Col,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2):-
         IntRow==Row,
