@@ -8,18 +8,14 @@ puz(1, [1-1, 6-6], 6-6, [2-2,5-1], [], [3-5-6, 4-2-6]).
 
 bosnianSnake(N, List) :-
 puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,RRow2-NumberOut2], [], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
-write(IntRow),
 board(NR, NC, Board),
-nl, write('Board'),nl,
-write(Board),nl, nl,
 matrixToListOfLists(Board,List),
 headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
 cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut(List,NumberOut,RRow,NR),
 cellsOfRestrictionOut(List,NumberOut2,RRow2,NR),
-write('Fez headAndTailCells'),
-write(List),
+imposeConectivity(List,List,NR,1),
 labeling([], List),
 printList(List,NR,0).
 
