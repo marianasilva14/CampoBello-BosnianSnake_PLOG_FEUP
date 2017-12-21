@@ -21,11 +21,11 @@ puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,RRow2-NumberOut2
 board(NR, NC, Board),
 matrixToListOfLists(Board,List),
 headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
+imposeConectivity(List,List,NR,1),
 cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut_ROW(List,NumberOut,RRow,NR),
 cellsOfRestrictionOut_ROW(List,NumberOut2,RRow2,NR),
-imposeConectivity(List,List,NR,1),
 labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,NR).
@@ -35,11 +35,11 @@ puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [], [CCol-NumberOut,CCol2-Number
 board(NR, NC, Board),
 matrixToListOfLists(Board,List),
 headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
+imposeConectivity(List,List,NR,1),
 cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut_COL(List,NumberOut,CCol,NR),
 cellsOfRestrictionOut_COL(List,NumberOut2,CCol2,NR),
-imposeConectivity(List,List,NR,1),
 labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard2(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,CCol,NumberOut,CCol2,NumberOut2,NR).
@@ -49,11 +49,11 @@ puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,_], [CCol-Number
 board(NR, NC, Board),
 matrixToListOfLists(Board,List),
 headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
+imposeConectivity(List,List,NR,1),
 cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut_ROW(List,NumberOut,RRow,NR),
 cellsOfRestrictionOut_COL(List,NumberOut2,CCol,NR),
-imposeConectivity(List,List,NR,1),
 labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard3(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,CCol,NumberOut2,NR).
@@ -174,6 +174,8 @@ cellsAround(List, Nrow, Ncol, Number, NR) :-
   Position\=Dim)),
   Number2 is (5 - Number),
   getAllNeighbours(Position, ListOut, List, NR),
+  nth1(Position,List,Element),
+  Element#=0,
   global_cardinality(ListOut,[1-Number,0-Number2]).
 
 board(_,0,[]).
