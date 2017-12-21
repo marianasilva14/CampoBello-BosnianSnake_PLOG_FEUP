@@ -20,10 +20,12 @@ imposeConectivity(Tail,List,Dim,NextPosition).
 imposePosition(Position,Neighbours,AllNeighbours,List,Size):-
   Dim is Size*Size,
   Value is Dim-Size,
+  Value2 is Dim-1,
+  Value1 is Value +1,
   Position \=1,
   Position \=Size,
   Position \=Dim,
-  Position\=Value,
+  Position\=Value1,
   sum(Neighbours,#=,Sum),
   sum(AllNeighbours,#=,Sum2),
   nth1(Position,List,Element),
@@ -32,14 +34,25 @@ imposePosition(Position,Neighbours,AllNeighbours,List,Size):-
 imposePosition(Position,Neighbours,AllNeighbours,List,Size):-
   Dim is Size*Size,
   Value is Dim-Size,
-  (Position ==1;
-  Position ==Size;
-  Position ==Dim;
-  Position==Value),
+  Value1 is Value +1,
+  (Position==Size;
+  Position==Value1),
   sum(Neighbours,#=,Sum),
   sum(AllNeighbours,#=,Sum2),
   nth1(Position,List,Element),
-  Element#=1 #=> ((Sum #=1) #/\ (Sum2 #=< 2)).
+  Element#=1 #=> ((Sum #=2) #/\ (Sum2 #= 2)).
+
+imposePosition(Position,Neighbours,AllNeighbours,List,Size):-
+Dim is Size*Size,
+Value is Dim-Size,
+Value1 is Value +1,
+(Position==1;
+Position==Dim),
+sum(Neighbours,#=,Sum),
+sum(AllNeighbours,#=,Sum2),
+nth1(Position,List,Element),
+Element#=1 #=> ((Sum #=1) #/\ (Sum2 #= 1)).
+
 
 getNeighbours(Position,Neighbours,List,Size):-
 Position==1,
@@ -61,7 +74,8 @@ setof(Element, (nth1(PositionUp,List,Element);
 getNeighbours(Position,Neighbours,List,Size):-
 Dim is Size*Size,
 Value is Dim-Size,
-Position==Value,
+Value1 is Value+1,
+Position==Value1,
 PositionRight is Position+1,
 PositionUp is Position-Size,
 setof(Element, (nth1(PositionUp,List,Element);
@@ -79,10 +93,11 @@ setof(Element, (nth1(PositionLeft,List,Element);
 getNeighbours(Position,Neighbours,List,Size):-
 Dim is Size*Size,
 Value is Dim-Size,
+Value1 is Value+1,
 Mod is Position mod Size,
 Mod ==1,
 Position\=1,
-Position\=Value,
+Position\=Value1,
 PositionRight is Position+1,
 PositionDown is Position+Size,
 PositionUp is Position-Size,
@@ -119,7 +134,8 @@ setof(Element, (nth1(PositionLeft,List,Element);
 getNeighbours(Position,Neighbours,List,Size):-
 Dim is Size*Size,
 Value is Dim-Size,
-Position>Value,
+Value1 is Value+1,
+Position>Value1,
 Position\=Dim,
 PositionLeft is Position-1,
 PositionUp is Position-Size,
@@ -133,7 +149,11 @@ getNeighbours(Position,Neighbours,List,Size):-
 Position>Size,
 Dim is Size*Size,
 Value is Dim-Size,
-Position<Value,
+Value1 is Value+1,
+Position<Value1,
+Mod is Position mod Size,
+Mod \=0,
+Mod \=1,
 PositionLeft is Position-1,
 PositionUp is Position-Size,
 PositionDown is Position+Size,
@@ -171,7 +191,8 @@ setof(Element, (nth1(PositionUp,List,Element);
 getAllNeighbours(Position,Neighbours,List,Size):-
 Dim is Size*Size,
 Value is Dim-Size,
-Position==Value,
+Value1 is Value+1,
+Position==Value1,
 PositionRight is Position+1,
 PositionUp is Position-Size,
 PositionUpRight is PositionRight-Size,
@@ -193,10 +214,11 @@ setof(Element, (nth1(PositionLeft,List,Element);
 getAllNeighbours(Position,Neighbours,List,Size):-
 Dim is Size*Size,
 Value is Dim-Size,
+Value1 is Value+1,
 Mod is Position mod Size,
 Mod ==1,
 Position\=1,
-Position\=Value,
+Position\=Value1,
 PositionRight is Position+1,
 PositionDown is Position+Size,
 PositionUp is Position-Size,
@@ -245,7 +267,8 @@ setof(Element, (nth1(PositionLeft,List,Element);
 getAllNeighbours(Position,Neighbours,List,Size):-
 Dim is Size*Size,
 Value is Dim-Size,
-Position>Value,
+Value1 is Value+1,
+Position>Value1,
 Position\=Dim,
 PositionLeft is Position-1,
 PositionUp is Position-Size,
@@ -263,7 +286,11 @@ getAllNeighbours(Position,Neighbours,List,Size):-
 Position>Size,
 Dim is Size*Size,
 Value is Dim-Size,
-Position<Value,
+Value1 is Value+1,
+Position<Value1,
+Mod is Position mod Size,
+Mod \=0,
+Mod \=1,
 PositionLeft is Position-1,
 PositionUp is Position-Size,
 PositionDown is Position+Size,
