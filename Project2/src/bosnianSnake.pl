@@ -5,11 +5,18 @@
 :- include('board.pl').
 
 puz(1, [1-1, 6-6], 6-6, [2-2,5-1], [], [3-5-6, 4-2-6]).
-puz(2, [1-1, 12-12], 12-12, [], [2-2,5-1], [3-5-6, 4-2-6]).
+puz(2, [1-1, 12-12], 12-12, [], [7-6,12-4], [6-4-7, 4-8-5]).
 puz(3, [1-1, 8-8], 8-8, [2-4,_], [5-1,_], [3-5-6, 4-2-7]).
-puz(4, [1-1, 6-6], 6-6, [2-2,5-1], [], [3-5-3, 4-2-6]).
+puz(4, [1-1, 7-7], 7-7, [5-3,_], [3-1,_], [4-2-3, 3-5-3]).
+%puz(5, [1-1, 15-15], 6-6, [2-2,5-1], [], [3-5-6, 4-2-6]).
+%puz(6, [1-1, 12-12], 12-12, [], [7-6,12-4], [6-4-7, 4-8-5]).
+%puz(7, [1-1, 5-5], 5-5, [2-4,_], [5-1,_], [3-5-6, 4-2-7]).
+puz(8, [1-1, 3-3], 3-3, [], [1-2,2-1], [3-1-2, 1-3-2]).
 
-bosnianSnake(N, List) :-
+randomPuzzle:-random(1,8,Puzzle),
+              bosnianSnake(Puzzle).
+
+bosnianSnake(N) :-
 puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,RRow2-NumberOut2], [], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
 board(NR, NC, Board),
 matrixToListOfLists(Board,List),
@@ -23,7 +30,7 @@ labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,NR).
 
-bosnianSnake(N, List) :-
+bosnianSnake(N) :-
 puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [], [CCol-NumberOut,CCol2-NumberOut2], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
 board(NR, NC, Board),
 matrixToListOfLists(Board,List),
@@ -37,7 +44,7 @@ labeling([], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard2(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,CCol,NumberOut,CCol2,NumberOut2,NR).
 
-bosnianSnake(N, List) :-
+bosnianSnake(N) :-
 puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,_], [CCol-NumberOut2,_], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
 board(NR, NC, Board),
 matrixToListOfLists(Board,List),
@@ -68,25 +75,6 @@ nth1(Position,List,Element),
 nth1(EndPosition,List,Element2),
 Element=1,
 Element2=1.
-
-getCellsAround(List, ListOut,Position,NR) :-
-  PositionUp is (Position -NR),
-  PositionUpLeft is PositionUp-1,
-  PositionUpRight is PositionUp+1,
-  PositionDown is (Position +NR),
-  PositionDownRight is PositionDown+1,
-  PositionDownLeft is PositionDown-1,
-  PositionRight is (Position + 1),
-  PositionLeft is (Position - 1),
-  setof(Element,
-              (nth1(PositionUp,List,Element);
-              nth1(PositionDown,List,Element);
-              nth1(PositionLeft,List,Element);
-              nth1(PositionRight,List,Element);
-              nth1(PositionUpLeft,List,Element);
-              nth1(PositionUpRight,List,Element);
-              nth1(PositionDownLeft,List,Element);
-              nth1(PositionDownRight,List,Element)),ListOut).
 
 getRowAux(_,L,L,Size,Size).
 getRowAux(List,ListaAux,ListOut,_,FinalRow):-
@@ -132,8 +120,60 @@ cellsOfRestrictionOut_COL(List,Number,Col,Size) :-
 
 cellsAround(List, Nrow, Ncol, Number, NR) :-
   getPosition(NR,Nrow,Ncol,Position),
+  Mod is Position mod NR,
+  Mod \=0,
+  Mod \=1,
+  Dim is NR*NR,
+  Value is Dim-NR,
+  Value1 is Value+1,
+  Position >NR,
+  Position < Value1,
   Number2 is (8 - Number),
-  getCellsAround(List, ListOut, Position, NR),
+  getAllNeighbours(Position, ListOut, List, NR),
+  global_cardinality(ListOut,[1-Number,0-Number2]).
+
+  cellsAround(List, Nrow, Ncol, Number, NR) :-
+    getPosition(NR,Nrow,Ncol,Position),
+    Dim is NR*NR,
+    Value is Dim-NR,
+    Value1 is Value+1,
+    Position\=1,
+    Position\=Value1,
+    Position\=NR,
+    Position\=Dim,
+    Mod is Position mod NR,
+    (Mod ==1;
+    Mod==0),
+    Number2 is (5 - Number),
+    getAllNeighbours(Position, ListOut, List, NR),
+    global_cardinality(ListOut,[1-Number,0-Number2]).
+
+
+cellsAround(List, Nrow, Ncol, Number, NR) :-
+  getPosition(NR,Nrow,Ncol,Position),
+  Dim is NR*NR,
+  Value is Dim-NR,
+  Value1 is Value+1,
+  (Position==1;
+  Position==Value1;
+  Position==NR;
+  Position==Dim),
+  Number2 is (3 - Number),
+  getAllNeighbours(Position, ListOut, List, NR),
+  global_cardinality(ListOut,[1-Number,0-Number2]).
+
+
+cellsAround(List, Nrow, Ncol, Number, NR) :-
+  getPosition(NR,Nrow,Ncol,Position),
+  Dim is NR*NR,
+  Value is Dim-NR,
+  Value1 is Value+1,
+  ((Position < NR,
+  Position\=1);
+  (Position > Value1,
+  Position\=Dim)),
+  Number2 is (5 - Number),
+  getAllNeighbours(Position, ListOut, List, NR),
   global_cardinality(ListOut,[1-Number,0-Number2]).
 
 board(_,0,[]).

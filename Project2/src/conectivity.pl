@@ -51,7 +51,7 @@ Position==Dim),
 sum(Neighbours,#=,Sum),
 sum(AllNeighbours,#=,Sum2),
 nth1(Position,List,Element),
-Element#=1 #=> ((Sum #=1) #/\ (Sum2 #= 1)).
+Element#=1 #=> ((Sum #=1) #/\ (Sum2 #=< 2)).
 
 
 getNeighbours(Position,Neighbours,List,Size):-
