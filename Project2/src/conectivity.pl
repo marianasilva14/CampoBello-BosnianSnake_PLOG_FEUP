@@ -17,8 +17,6 @@ imposePosition(Position,Neighbours,AllNeighbours,List,Dim),
 NextPosition is Position+1,
 imposeConectivity(Tail,List,Dim,NextPosition).
 
-
-
 imposePosition(Position,Neighbours,AllNeighbours,List,Size):-
   Dim is Size*Size,
   Value is Dim-Size,
