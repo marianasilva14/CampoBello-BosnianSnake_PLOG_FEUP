@@ -1,6 +1,4 @@
-:- use_module(library(clpfd)).
 :- use_module(library(random)).
-:- use_module(library(lists)).
 :- include('conectivity.pl').
 :- include('board.pl').
 
