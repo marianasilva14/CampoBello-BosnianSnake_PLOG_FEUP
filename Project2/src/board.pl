@@ -15,9 +15,11 @@ printBoard([L|Ls],Row,Col,CellsAround,[Row1-Number|Tail],Size):-
       write('  '),
       write(Number),
       write(' |'),
-      printFinalRow(L,Row,Col,CellsAround),
+      printRow(L,Row,Col,CellsAround,CellsAround2),nl,
+      write('    |'),
+      printSpaces(L),nl,
       Row2 is Row+1,
-      printBoard(Ls,Row2,Col,CellsAround,Tail,Size).
+      printBoard(Ls,Row2,Col,CellsAround2,Tail,Size).
 
 printBoard([L|Ls],Row,Col,CellsAround,[Row1-Number|Tail],Size):-
       Row\=Row1,
@@ -25,24 +27,22 @@ printBoard([L|Ls],Row,Col,CellsAround,[Row1-Number|Tail],Size):-
       write('    |'),
       printSpaces(L),nl,
       write('    |'),
-      printFinalRow(L,Row,Col,CellsAround),
+      printRow(L,Row,Col,CellsAround,CellsAround2),nl,
+      write('    |'),
+      printSpaces(L),nl,
       Row2 is Row+1,
-      printBoard(Ls,Row2,Col,CellsAround,[Row1-Number|Tail],Size).
+      printBoard(Ls,Row2,Col,CellsAround2,[Row1-Number|Tail],Size).
 
 printBoard([L|Ls],Row,Col,CellsAround,[],Size):-
       printLine(Size),nl,
       write('    |'),
       printSpaces(L),nl,
       write('    |'),
-      printFinalRow(L,Row,Col,CellsAround),
+      printRow(L,Row,Col,CellsAround,CellsAround2),nl,
+      write('    |'),
+      printSpaces(L),nl,
       Row2 is Row+1,
-      printBoard(Ls,Row2,Col,CellsAround,[],Size).
-
-printFinalRow([],_,_,_).
-printFinalRow([X|Xs],Row,Col,CellsAround):-
-        printRow([X|Xs],Row,Col,CellsAround),nl,
-        write('    |'),
-        printSpaces([X|Xs]),nl.
+      printBoard(Ls,Row2,Col,CellsAround2,[],Size).
 
 printCol(_,S,S).
 printCol([Col-Number|Tail],Size,N):-
@@ -64,29 +64,29 @@ printCol([],Size,N):-
         N1 is N+1,
         printCol([],Size,N1).
 
-printRow([],_,_,_).
-printRow([_|Xs],Row,Col,[Row1-Col1-Number|Tail]):-
+printRow([],_,_,S,S).
+printRow([_|Xs],Row,Col,[Row1-Col1-Number|Tail],S):-
         Row==Row1,
         Col==Col1,
         write('  '),
         write(Number),
         write(' |'),
         Col2 is Col+1,
-        printRow(Xs,Row,Col2,Tail).
+        printRow(Xs,Row,Col2,Tail,S).
 
-printRow([X|Xs],Row,Col,[]):-
+printRow([X|Xs],Row,Col,[],S):-
         X==0,
         write('    '),write('|'),
         Col2 is Col+1,
-        printRow(Xs,Row,Col2,[]).
+        printRow(Xs,Row,Col2,[],S).
 
-printRow([X|Xs],Row,Col,[]):-
+printRow([X|Xs],Row,Col,[],S):-
         X==1,
         write('****'),write('|'),
         Col2 is Col+1,
-        printRow(Xs,Row,Col2,[]).
+        printRow(Xs,Row,Col2,[],S).
 
-printRow([X|Xs],Row,Col,[Row1-Col1-Number|Tail]):-
+printRow([X|Xs],Row,Col,[Row1-Col1-Number|Tail],S):-
         ((Row\=Row1,
         Col\=Col1);
         (Row==Row1,
@@ -96,19 +96,19 @@ printRow([X|Xs],Row,Col,[Row1-Col1-Number|Tail]):-
         X==0,
         write('    '),write('|'),
         Col2 is Col+1,
-        printRow(Xs,Row,Col2,[Row1-Col1-Number|Tail]).
+        printRow(Xs,Row,Col2,[Row1-Col1-Number|Tail],S).
 
-printRow([X|Xs],Row,Col,[Row1-Col1-Number|Tail]):-
+printRow([X|Xs],Row,Col,[Row1-Col1-Number|Tail],S):-
       ((Row\=Row1,
       Col\=Col1);
       (Row==Row1,
       Col\=Col1);
       (Row\=Row1,
       Col==Col1)),
-        X==1,
-        write('****'),write('|'),
-        Col2 is Col+1,
-        printRow(Xs,Row,Col2,[Row1-Col1-Number|Tail]).
+      X==1,
+      write('****'),write('|'),
+      Col2 is Col+1,
+      printRow(Xs,Row,Col2,[Row1-Col1-Number|Tail],S).
 
 
 printSpaces([]).
