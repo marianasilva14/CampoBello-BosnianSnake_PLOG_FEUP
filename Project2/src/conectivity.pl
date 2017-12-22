@@ -1,7 +1,7 @@
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 
-%Predicate that does an if than else
+
 matrixToListOfLists(Board,List) :-
 append(Board,List).
 
@@ -16,6 +16,8 @@ getAllNeighbours(Position,AllNeighbours,List,Dim),
 imposePosition(Position,Neighbours,AllNeighbours,List,Dim),
 NextPosition is Position+1,
 imposeConectivity(Tail,List,Dim,NextPosition).
+
+
 
 imposePosition(Position,Neighbours,AllNeighbours,List,Size):-
   Dim is Size*Size,

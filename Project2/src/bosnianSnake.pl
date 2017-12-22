@@ -16,20 +16,21 @@ puz(8, [1-1, 3-3], 3-3, [], [1-2,2-1], [3-1-2, 1-3-2]).
 randomPuzzle:-random(1,8,Puzzle),
               bosnianSnake(Puzzle).
 
-bosnianSnake(N) :-
-puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [RRow-NumberOut,RRow2-NumberOut2], [], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
+bosnianSnake(N,L) :-
+puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, RowCells, ColCells, CellsAround),
 board(NR, NC, Board),
 matrixToListOfLists(Board,List),
 headAndTailCells(List, BeginRow,BeginCol,EndRow,EndCol,NR),
 imposeConectivity(List,List,NR,1),
-cellsAround(List, IntRow, IntCol, NumberIn, NR),
-cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
-cellsOfRestrictionOut_ROW(List,NumberOut,RRow,NR),
-cellsOfRestrictionOut_ROW(List,NumberOut2,RRow2,NR),
-labeling([], List),
+scroolCellsAround(CellsAround,List,NR),
+scrollRestrictionsRow(RowCells,List,NR),
+scrollRestrictionsCol(ColCells,List,NR),
+count(1,List,#=,Count),
+labeling([minimize(Count)], List),
 list_to_matrix(List,NR,Board),
-printFinalBoard(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,RRow2,NumberOut2,NR).
-
+write('passei'),
+printFinalBoard(Board,1,1,CellsAround,RowCells,ColCells,NR).
+/*
 bosnianSnake(N) :-
 puz(N, [BeginRow-BeginCol,EndRow-EndCol],NR-NC, [], [CCol-NumberOut,CCol2-NumberOut2], [IntRow-IntCol-NumberIn,IntRow2-IntCol2-NumberIn2]),
 board(NR, NC, Board),
@@ -40,7 +41,8 @@ cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut_COL(List,NumberOut,CCol,NR),
 cellsOfRestrictionOut_COL(List,NumberOut2,CCol2,NR),
-labeling([], List),
+count(1,List,#=,Count),
+labeling([minimize(Count),ffc], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard2(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,CCol,NumberOut,CCol2,NumberOut2,NR).
 
@@ -54,10 +56,11 @@ cellsAround(List, IntRow, IntCol, NumberIn, NR),
 cellsAround(List, IntRow2, IntCol2, NumberIn2, NR),
 cellsOfRestrictionOut_ROW(List,NumberOut,RRow,NR),
 cellsOfRestrictionOut_COL(List,NumberOut2,CCol,NR),
-labeling([], List),
+count(1,List,#=,Count),
+labeling([minimize(Count),ffc], List),
 list_to_matrix(List,NR,Board),
 printFinalBoard3(Board,1,1,IntRow,IntCol,IntRow2,IntCol2,NumberIn,NumberIn2,RRow,NumberOut,CCol,NumberOut2,NR).
-
+*/
 list_to_matrix([], _, []).
 list_to_matrix(List, Size, [Row|Matrix]):-
   list_to_matrix_row(List, Size, Row, Tail),
@@ -117,6 +120,21 @@ cellsOfRestrictionOut_COL(List,Number,Col,Size) :-
   Number2 is (Size - Number),
   getCol(List,Col,ListOut,Size),
   global_cardinality(ListOut,[1-Number, 0-Number2]).
+
+scrollRestrictionsRow([],_,_).
+scrollRestrictionsRow([Row-Number|Tail],List,Size):-
+  cellsOfRestrictionOut_ROW(List,Number,Row,Size),
+  scrollRestrictionsRow(Tail,List,Size).
+
+scrollRestrictionsCol([],_,_).
+scrollRestrictionsCol([Col-Number|Tail],List,Size):-
+  cellsOfRestrictionOut_COL(List,Number,Col,Size),
+  scrollRestrictionsCol(Tail,List,Size).
+
+scroolCellsAround([],_,_).
+scroolCellsAround([Row-Col-Number|Tail],List,Size):-
+  cellsAround(List,Row,Col,Number,Size),
+  scroolCellsAround(Tail,List,Size).
 
 cellsAround(List, Nrow, Ncol, Number, NR) :-
   getPosition(NR,Nrow,Ncol,Position),
