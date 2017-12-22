@@ -1,15 +1,15 @@
 printFinalBoard([L|Ls],Row,Col,CellsAround,RowCells,ColCells,Size):-
   nl,
+  write('     '),
   printCol(ColCells,Size,1),nl,
-  write(RowCells),nl,nl,
   printBoard([L|Ls],Row,Col,CellsAround,RowCells,Size),
   printLine(Size).
 
 
 printBoard([],_,_,_,_,_).
 printBoard([L|Ls],Row,Col,CellsAround,[Row1-Number|Tail],Size):-
-      printLine(Size),nl,
       Row==Row1,
+      printLine(Size),nl,
       write('    |'),
       printSpaces(L),nl,
       write('  '),
@@ -20,8 +20,8 @@ printBoard([L|Ls],Row,Col,CellsAround,[Row1-Number|Tail],Size):-
       printBoard(Ls,Row2,Col,CellsAround,Tail,Size).
 
 printBoard([L|Ls],Row,Col,CellsAround,[Row1-Number|Tail],Size):-
-      printLine(Size),nl,
       Row\=Row1,
+      printLine(Size),nl,
       write('    |'),
       printSpaces(L),nl,
       write('    |'),
@@ -48,7 +48,7 @@ printCol(_,S,S).
 printCol([Col-Number|Tail],Size,N):-
         N==Col,
         write('  '),
-        write(NumberOut),
+        write(Number),
         write('  '),
         N1 is N+1,
         printCol(Tail,Size,N1).
@@ -65,7 +65,7 @@ printCol([],Size,N):-
         printCol([],Size,N1).
 
 printRow([],_,_,_).
-printRow([X|Xs],Row,Col,[Row1-Col1-Number|Tail]):-
+printRow([_|Xs],Row,Col,[Row1-Col1-Number|Tail]):-
         Row==Row1,
         Col==Col1,
         write('  '),
