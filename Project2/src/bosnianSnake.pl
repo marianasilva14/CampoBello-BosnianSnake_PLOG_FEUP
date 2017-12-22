@@ -26,9 +26,18 @@ scrollCellsAround(CellsAround,List,NR),
 scrollRestrictionsRow(RowCells,List,NR),
 scrollRestrictionsCol(ColCells,List,NR),
 count(1,List,#=,Count),
+reset_timer,
 labeling([minimize(Count)], List),
+print_time,
+fd_statistics,
 list_to_matrix(List,NR,Board),
 printFinalBoard(Board,1,1,CellsAround,RowCells,ColCells,NR).
+
+reset_timer :- statistics(walltime,_).
+print_time :-
+	statistics(walltime,[_,T]),
+	TS is ((T//10)*10),
+	nl, write('Time: '), write(TS), write('ms'), nl, nl.
 
 list_to_matrix([], _, []).
 list_to_matrix(List, Size, [Row|Matrix]):-
