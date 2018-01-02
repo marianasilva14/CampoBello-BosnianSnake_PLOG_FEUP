@@ -4,7 +4,14 @@ Logic progamming
 
 ### Project 1
 
-Development of campo bello game in prolog
+Development of campo bello game in prolog.
+
+<img width="671" alt="captura de ecra 2018-01-02 as 21 29 10" src="https://user-images.githubusercontent.com/22794956/34500801-2e56fe26-f004-11e7-891b-311c0b98f277.png">
+
+
+<img width="658" alt="captura de ecra 2018-01-02 as 21 30 12" src="https://user-images.githubusercontent.com/22794956/34500805-2eca21c6-f004-11e7-8afb-728b9ca39b54.png">
+
+<img width="429" alt="captura de ecra 2018-01-02 as 21 29 54" src="https://user-images.githubusercontent.com/22794956/34500803-2eb22954-f004-11e7-8020-d7746d61fa0c.png">
 
 ### Project 2
 
