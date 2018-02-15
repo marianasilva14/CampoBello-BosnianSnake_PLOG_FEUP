@@ -1,4 +1,4 @@
-# feup-PLOG
+# PLOG
 
 Logic progamming 
 
@@ -24,3 +24,9 @@ indicate the number of snake cells in that row/column. Numbers inside the grid i
 how many of the 8 cells around it are used by the snake. 
 
 <img width="470" alt="captura de ecra 2018-01-02 as 21 27 16" src="https://user-images.githubusercontent.com/22794956/34500712-cf650336-f003-11e7-9b68-1ec73dd3c56b.png">
+
+#### Group members
+
+- Francisca Leão Cerquinho Ribeiro da Fonseca - up201505791
+- Mariana Lopes Silva - up201506197
+
